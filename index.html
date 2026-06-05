@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Ten Questions. Discovery Branch Logic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#15130f;
+    --ink-2:#2c2823;
+    --paper:#f4f0e8;
+    --paper-2:#ece6d9;
+    --kraft:#b07a3c;
+    --kraft-deep:#8a5a26;
+    --amber:#e0962a;
+    --line:#d8cfbd;
+    --line-2:#c4b89f;
+    --green:#3f6b3a;
+    --muted:#7a7163;
+    --field:#e8dfcb;
+    --shadow:0 1px 0 rgba(0,0,0,.04), 0 8px 28px -18px rgba(21,19,15,.4);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(176,122,60,.10), transparent 60%),
+      var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:34px 22px 90px;}
+
+  /* ---------- Header ---------- */
+  header.masthead{
+    border:2px solid var(--ink);
+    background:var(--ink);
+    color:var(--paper);
+    padding:26px 28px 22px;
+    position:relative;
+    overflow:hidden;
+  }
+  header.masthead::before{
+    content:"";position:absolute;inset:0;
+    background-image:repeating-linear-gradient(90deg, rgba(224,150,42,.16) 0 2px, transparent 2px 26px);
+    opacity:.5;pointer-events:none;
+  }
+  .kicker{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--amber);margin:0 0 8px;position:relative;
+  }
+  .mantra{
+    position:relative;margin:14px 0 0;padding:10px 0 0;
+    border-top:1px solid rgba(224,150,42,.4);
+    font-family:'Saira Condensed',sans-serif;font-weight:600;font-size:14px;
+    letter-spacing:.18em;text-transform:uppercase;color:var(--amber);
+  }
+  .mantra span{color:#d9d1c2;font-weight:500;}
+  h1{
+    font-family:'Saira Condensed',sans-serif;
+    font-weight:800;font-size:clamp(34px,6vw,62px);
+    line-height:.92;letter-spacing:.01em;text-transform:uppercase;
+    margin:0;position:relative;
+  }
+  h1 .thin{font-weight:500;color:var(--kraft);}
+  .sub{
+    position:relative;margin:14px 0 0;max-width:60ch;
+    font-size:14.5px;color:#d9d1c2;
+  }
+  .sub b{color:var(--paper);font-weight:600;}
+
+  /* ---------- Loop model ---------- */
+  .model{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:0;
+    border:2px solid var(--ink);border-top:none;
+  }
+  .model .cell{
+    padding:14px 14px;border-right:1px solid var(--line-2);
+    background:var(--paper-2);transition:background .12s, color .12s;
+  }
+  .model .cell:last-child{border-right:none;}
+  .model .ct{
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--kraft-deep);margin:0 0 5px;font-weight:600;
+  }
+  .model .ch{font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:18px;text-transform:uppercase;margin:0 0 4px;letter-spacing:.01em;}
+  .model .cd{font-size:12.5px;color:var(--ink-2);margin:0;line-height:1.4;}
+  .model .cn{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);margin-top:6px;}
+
+  /* job cells are clickable filters */
+  .model .cell.job-cell{cursor:pointer;}
+  .model .cell.job-cell:hover{background:var(--paper);}
+  .model .cell.is-active{background:var(--ink);color:var(--paper);}
+  .model .cell.is-active .ct{color:var(--amber);}
+  .model .cell.is-active .ch{color:var(--paper);}
+  .model .cell.is-active .cd{color:#d9d1c2;}
+  .model .cell.is-active .cn{color:var(--amber);}
+
+  /* gate cell is informational, not a filter */
+  .model .cell.gate-cell{background:#fff0ee;}
+  .model .cell.gate-cell .ct{color:#8b0000;}
+  .model .cell.gate-cell .ch{color:#8b0000;}
+  .model .cell.gate-cell .cd{color:#5c1a1a;}
+  .model .cell.gate-cell .cn{color:#8b0000;}
+
+  /* ---------- Toolbar ---------- */
+  .toolbar{
+    display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+    margin:22px 0 18px;
+  }
+  .search{
+    flex:1 1 280px;display:flex;align-items:center;gap:8px;
+    border:1.5px solid var(--line-2);background:#fff;padding:9px 13px;
+  }
+  .search input{border:none;outline:none;font-family:'IBM Plex Sans';font-size:14px;width:100%;background:transparent;color:var(--ink);}
+  .search svg{flex:none;}
+  button.tb{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);
+    padding:9px 14px;cursor:pointer;transition:.12s;font-weight:500;
+  }
+  button.tb:hover{background:var(--ink);color:var(--paper);}
+  button.tb.solid{background:var(--ink);color:var(--paper);}
+  button.tb.solid:hover{background:var(--kraft-deep);border-color:var(--kraft-deep);}
+
+  .legend{
+    display:flex;flex-wrap:wrap;gap:14px;margin:0 0 24px;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);
+  }
+  .legend .fk{
+    background:var(--field);border:1px solid var(--line-2);color:var(--kraft-deep);
+    padding:2px 7px;font-weight:600;letter-spacing:.04em;
+  }
+
+  /* ---------- Question cards ---------- */
+  .q{border:2px solid var(--ink);margin-bottom:14px;background:var(--paper);box-shadow:var(--shadow);}
+  .q.hidden{display:none;}
+  .qhead{
+    display:flex;align-items:flex-start;gap:18px;padding:18px 20px;cursor:pointer;
+    user-select:none;transition:background .12s;
+  }
+  .qhead:hover{background:var(--paper-2);}
+  .qnum{
+    font-family:'Saira Condensed',sans-serif;font-weight:800;font-size:46px;line-height:.8;
+    color:var(--ink);flex:none;width:58px;text-align:center;
+    border-right:2px solid var(--line-2);padding-right:14px;
+  }
+  .q.open .qnum{color:var(--kraft-deep);}
+  .qtext{flex:1;min-width:0;}
+  .qtitle{font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:25px;text-transform:uppercase;letter-spacing:.01em;margin:0 0 4px;line-height:1;}
+  .qwhy{font-size:13px;color:var(--ink-2);margin:0;}
+  .qjob{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    color:#fff;padding:3px 8px;display:inline-block;margin-top:9px;font-weight:600;
+  }
+  .job-qualify{background:var(--green);}
+  .job-matrix{background:var(--kraft-deep);}
+  .job-next{background:var(--ink-2);}
+  .chev{flex:none;align-self:center;transition:transform .2s;color:var(--muted);}
+  .q.open .chev{transform:rotate(90deg);}
+
+  .qbody{display:none;border-top:1.5px solid var(--line);padding:6px 20px 20px 20px;}
+  .q.open .qbody{display:block;animation:fade .22s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(-4px);}to{opacity:1;transform:none;}}
+
+  .fills{
+    background:var(--paper-2);border:1px solid var(--line-2);padding:11px 14px;margin:12px 0 18px;
+    display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+  }
+  .fills .flabel{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-right:2px;}
+  .fk{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--field);
+    border:1px solid var(--line-2);color:var(--kraft-deep);padding:2px 8px;font-weight:600;letter-spacing:.03em;
+  }
+
+  /* ---------- Branch tree ---------- */
+  .branch{margin-left:2px;border-left:2px solid var(--line);padding-left:0;}
+  .node{position:relative;}
+  .node > .nrow{
+    position:relative;padding:7px 0 7px 22px;
+  }
+  .node > .nrow::before{
+    content:"";position:absolute;left:0;top:18px;width:14px;height:0;border-top:2px solid var(--line);
+  }
+  .node.has-children > .nrow{cursor:pointer;}
+  .nq{font-size:14px;color:var(--ink);font-weight:500;display:inline;}
+  .node.has-children > .nrow .nq{font-weight:600;}
+  .ntoggle{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--kraft-deep);
+    border:1px solid var(--line-2);background:var(--field);padding:0px 5px;margin-left:8px;
+    display:inline-block;vertical-align:middle;font-weight:600;
+  }
+  .nhint{display:block;font-size:12px;color:var(--muted);margin-top:2px;font-style:italic;}
+  .nfk{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;background:transparent;
+    color:var(--kraft-deep);border:1px dashed var(--line-2);padding:1px 6px;margin-left:6px;font-weight:600;
+    white-space:nowrap;
+  }
+  .children{display:none;margin-left:18px;}
+  .node.open > .children{display:block;}
+  .node.has-children > .nrow .ntoggle::after{content:"+ open";}
+  .node.has-children.open > .nrow .ntoggle::after{content:"– close";}
+
+  .script{
+    background:var(--ink);color:var(--paper);padding:9px 13px;margin:8px 0 8px 22px;
+    font-size:13px;border-left:3px solid var(--amber);
+  }
+  .script b{color:var(--amber);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;display:block;margin-bottom:3px;font-weight:600;}
+
+  footer{margin-top:34px;border-top:2px solid var(--ink);padding-top:14px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+
+  @media (max-width:680px){
+    .model{grid-template-columns:1fr;}
+    .model .cell{border-right:none;border-bottom:1px solid var(--line-2);}
+    .qnum{font-size:34px;width:42px;}
+    .qtitle{font-size:20px;}
+  }
+  @media print{
+    body{background:#fff;}
+    .toolbar,.chev,.ntoggle{display:none!important;}
+    .qbody,.children,.q.open .qbody{display:block!important;}
+    .node>.children{display:block!important;}
+    .q{break-inside:avoid;box-shadow:none;}
+  }
+
+  /* ---------- Special node types ---------- */
+  /* RULE: business constraint, not a question */
+  .type-rule > .nrow{background:#fdf6e3;border-left:3px solid var(--amber);padding:6px 0 6px 14px;}
+  .type-rule > .nrow .nq{color:var(--kraft-deep);font-weight:700;font-size:13px;}
+  .type-rule > .nrow::before{border-top-color:var(--amber);}
+
+  /* GATE: required action. Hard blocker before Order Form */
+  .type-gate > .nrow{background:#fff0ee;border:1.5px solid #c0392b;border-left:4px solid #c0392b;padding:8px 12px 8px 14px;}
+  .type-gate > .nrow .nq{color:#8b0000;font-weight:700;font-size:13.5px;}
+  .type-gate > .nrow::before{display:none;}
+
+  /* REQUIRED: checklist item inside a gate */
+  .type-required > .nrow{padding:5px 0 5px 14px;background:#fff8f7;}
+  .type-required > .nrow .nq{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#5c1a1a;}
+  .type-required > .nrow .nq::before{content:"☐  ";}
+  .type-required > .nrow::before{border-top-color:#c0392b;}
+
+  /* LOOP: cycle-back indicator */
+  .type-loop > .nrow{background:var(--paper-2);border-left:3px solid var(--ink-2);padding:6px 0 6px 14px;}
+  .type-loop > .nrow .nq{color:var(--ink-2);font-style:italic;font-size:13px;}
+  .type-loop > .nrow::before{border-top-color:var(--ink-2);}
+
+  /* NOTE: muted guidance, not a question */
+  .type-note > .nrow .nq{color:var(--muted);font-style:italic;font-size:13px;font-weight:400;}
+
+  /* SECTION-HEADER: bold label for sub-grouping */
+  .type-section > .nrow .nq{
+    font-family:'Saira Condensed',sans-serif;font-size:16px;text-transform:uppercase;
+    font-weight:700;letter-spacing:.03em;color:var(--ink-2);
+  }
+  .type-section > .nrow{padding-top:9px;padding-bottom:6px;}
+
+  /* XREF: clickable cross-reference jump chip */
+  .xref{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.04em;
+    color:#fff;background:var(--ink-2);padding:2px 8px;margin-left:7px;
+    cursor:pointer;display:inline-block;font-weight:600;text-transform:uppercase;
+    transition:background .15s, transform .1s;white-space:nowrap;border:1px solid var(--ink-2);
+  }
+  .xref::before{content:"↗ ";color:var(--amber);}
+  .xref:hover{background:var(--kraft-deep);border-color:var(--kraft-deep);transform:translateY(-1px);}
+  .xref:active{transform:translateY(0);}
+
+  /* XREF-FLASH: brief highlight on landed target */
+  .xref-flash > .nrow,
+  .xref-flash > .qhead{
+    animation:xrefFlash 1.8s ease-out;
+  }
+  @keyframes xrefFlash{
+    0%   {background:rgba(224,150,42,.55);}
+    100% {background:transparent;}
+  }
+
+  /* ---------- Search counter and nav arrows ---------- */
+  .search-counter{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);
+    white-space:nowrap;padding:0 6px;letter-spacing:.03em;
+  }
+  .search-nav{
+    background:transparent;border:1px solid var(--line-2);
+    width:26px;height:26px;cursor:pointer;
+    color:var(--ink-2);font-size:13px;font-weight:700;line-height:1;
+    display:inline-flex;align-items:center;justify-content:center;
+    transition:background .12s, border-color .12s;
+  }
+  .search-nav:hover:not(:disabled){background:var(--paper-2);border-color:var(--ink-2);}
+  .search-nav:disabled{opacity:.28;cursor:not-allowed;}
+
+  /* ---------- Search hit highlighting ---------- */
+  .search-hit > .nrow{background:rgba(224,150,42,.22);}
+  .search-current > .nrow{
+    background:rgba(224,150,42,.55);
+    outline:2px solid var(--amber);outline-offset:-2px;
+  }
+  .qhead.search-hit-q{background:rgba(224,150,42,.18);}
+
+  /* ---------- Breadcrumb ---------- */
+  .breadcrumb{
+    position:sticky;top:0;z-index:5;
+    background:var(--paper);
+    border:1.5px solid var(--line-2);border-bottom:2px solid var(--ink);
+    padding:10px 14px;margin-bottom:18px;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;
+    letter-spacing:.05em;text-transform:uppercase;color:var(--ink-2);
+    line-height:1.4;min-height:18px;
+    box-shadow:0 4px 16px -10px rgba(21,19,15,.3);
+  }
+  .breadcrumb-segment{cursor:pointer;color:var(--kraft-deep);font-weight:600;}
+  .breadcrumb-segment:hover{text-decoration:underline;text-underline-offset:3px;}
+  .breadcrumb-sep{margin:0 7px;color:var(--muted);}
+  .breadcrumb-current{color:var(--ink);font-weight:700;}
+  .breadcrumb-empty{color:var(--muted);font-style:italic;font-weight:400;text-transform:none;letter-spacing:0;}
+
+  /* ---------- Job filter (hide questions outside active job) ---------- */
+  .q.hidden-by-job{display:none;}
+
+  /* ---------- Essentials mode (hide non-essential branches) ---------- */
+  #tree.essentials-on .node:not(.essential){display:none;}
+  #essentialsToggle.is-active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+  #essentialsToggle.is-active::before{content:"●  ";color:var(--amber);}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="kicker">Vision Packaging // Beyond the Ten Questions</p>
+    <h1>Discovery Architect<br><span class="thin">Branch Logic, Loops &amp; Gates</span></h1>
+    <p class="sub">The Ten Questions are the doorway. <b>This is what happens after.</b> Every branch below is built so a rep can drive a real conversation, not run a checklist. Every gate stops the Order Form until the right paperwork is in place.</p>
+    <p class="mantra">Deep, meaningful insights <span>·</span> Meaningful business conversations</p>
+  </header>
+
+  <div class="model">
+    <div class="cell job-cell" data-job="qualify">
+      <p class="ct">Job 1 // Qualify</p>
+      <p class="ch">Is this real?</p>
+      <p class="cd">Size the account and the world around it before spending an hour quoting.</p>
+      <p class="cn">Q1 · Q5 · Q10</p>
+    </div>
+    <div class="cell job-cell" data-job="matrix">
+      <p class="ct">Job 2 // The Buy Matrix</p>
+      <p class="ch">One looped grid</p>
+      <p class="cd">For every item: volume, frequency, price, source. For every vendor: loop back.</p>
+      <p class="cn">Q2 ↔ Q7 ↔ Q3 ↔ Q4 ↔ Q8</p>
+    </div>
+    <div class="cell job-cell" data-job="next">
+      <p class="ct">Job 3 // Next Move</p>
+      <p class="ch">Dock and timing</p>
+      <p class="cd">How it leaves their building, and the window to displace the incumbent.</p>
+      <p class="cn">Q6 · Q9</p>
+    </div>
+    <div class="cell gate-cell">
+      <p class="ct">⚠️ The Universal Gate</p>
+      <p class="ch">Custom = blocked</p>
+      <p class="cd">Anything made specifically for them (printed, fabricated, custom-sized, custom-spec) requires Custom Item Checklist plus Signed Agreement before the Order Form.</p>
+      <p class="cn">applies to every category</p>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <label class="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7a7163" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+      <input id="search" type="text" placeholder="Search questions and branches (e.g. stretch, vendor, pallet, gauge)...">
+      <span class="search-counter" id="searchCounter"></span>
+      <button class="search-nav" id="searchPrev" title="Previous match" disabled>↑</button>
+      <button class="search-nav" id="searchNext" title="Next match" disabled>↓</button>
+    </label>
+    <button class="tb" id="essentialsToggle" title="Show only essential branches for training">Essentials only</button>
+    <button class="tb solid" id="expandAll">Expand all</button>
+    <button class="tb" id="collapseAll">Collapse all</button>
+  </div>
+
+  <div class="breadcrumb" id="breadcrumb">
+    <span class="breadcrumb-empty">Click any question to start. Your trail will show here.</span>
+  </div>
+
+  <div class="legend">
+    <span>Field tags map each branch to the form it fills:</span>
+    <span class="fk">DESCRIPTION</span><span class="fk">QTY</span><span class="fk">UNIT</span><span class="fk">PRICE</span><span class="fk">COST</span><span class="fk">VENDOR</span><span class="fk">FOB</span><span class="fk">LEAD TIME</span><span class="fk">GTM</span>
+  </div>
+
+  <div id="tree"></div>
+
+  <footer>
+    <span>Vision Packaging · Discovery Architect</span>
+    <span>v0.4 · build 2026-06-05 · training mode</span>
+    <span id="meta"></span>
+  </footer>
+</div>
+
+<script>
+/* =========================================================================
+   DATA MODEL. Edit here to update the framework.
+
+   Node schema (recursive):
+     q:         string   required. The question or statement text.
+     hint:      string   optional. Rep-side coaching note (italic, muted).
+     fk:        array    optional. RFQ / Order Form fields this answer fills.
+                         Valid tags: DESCRIPTION, QTY, UNIT, PRICE, COST, VENDOR,
+                         FOB, LEAD TIME, GTM, TERMS, ORDER DATE, SHIP VIA, WEIGHT.
+     script:    string   optional. Exact words for the rep to say. Renders as
+                         a dark callout. Use sparingly, only high-leverage lines.
+     type:      string   optional. Visual variant:
+                           "rule"     amber, business constraint, not a question
+                           "gate"     red border, required action before Order Form
+                           "required" checklist item inside a gate
+                           "loop"     cycle-back indicator
+                           "note"     muted guidance, not a question
+                           "section"  bold section header
+     id:        string   optional. Stable DOM id for xref jump targets.
+                         Conventions: "target-<noun>" for branches,
+                         auto "q-<n>" assigned to top-level question cards.
+     xref:      array    optional. Cross-reference jump chips rendered inline.
+                         Each entry: { label:"chip text", target:"target-id" }
+     children:  array    optional. Nested nodes (same schema, recursive).
+
+   Top-level question schema:
+     n:        number   1 to 10
+     title:    string   the question
+     job:      string   "qualify" | "matrix" | "next" (controls badge color)
+     jobLabel: string   the visible badge text
+     why:      string   one-line rationale shown when the card opens
+     fills:    array    aggregate RFQ/Order fields this whole question feeds
+     branches: array    the discovery tree under this question
+   ========================================================================= */
+const DATA = [
+  {
+    n:1, title:"What do you do?", job:"qualify", jobLabel:"Job 1 · Qualify",
+    why:"Industry profile predicts the whole packaging spend. Read the business before you read the buyer.",
+    fills:["context for ALL"],
+    branches:[
+      { q:"What industry / what's the end product?", hint:"Vertical dictates the spec profile.", children:[
+        { q:"Food & beverage?", fk:["DESCRIPTION"], hint:"FDA-grade liners, moisture, cold chain, grease resistance." },
+        { q:"Electronics / components?", fk:["DESCRIPTION"], hint:"ESD / anti-static foam & bag, desiccant, moisture-barrier." },
+        { q:"Heavy industrial / metal / machined?", fk:["DESCRIPTION"], hint:"High ECT / double-double wall, edge protect, VCI, banding." },
+        { q:"E-commerce / fulfillment?", fk:["DESCRIPTION","UNIT"], hint:"DIM-weight box optimization, mailers, void fill, dunnage." },
+        { q:"Medical / pharma?", fk:["DESCRIPTION"], hint:"Sterile barrier, lot traceability, validation, tamper-evident." },
+        { q:"3PL / contract packager?", fk:["QTY","VENDOR"], hint:"They buy for many clients = volume + program sell." }
+      ]},
+      { q:"Who are THEIR customers? B2B, retail, or DTC?", hint:"Retail-ready / shelf-ready changes print and structure.", fk:["DESCRIPTION"] },
+      { q:"Other locations or sister companies?", id:"target-multi-location", fk:["QTY","VENDOR"], xref:[{label:"Q10 Sister Cos", target:"target-sisters"}], hint:"Multi-site = consolidation play + bigger blanket.", children:[
+        { q:"Does each site buy independently or is it central?", fk:["VENDOR"] },
+        { q:"Same SKUs across sites?", fk:["QTY"], hint:"Cross-site standardization = leverage on cost." }
+      ]},
+      { q:"Who's the decision-maker vs the spec-er vs the influencer?", hint:"Procurement signs, ops specs, owner overrules. Map all three.", children:[
+        { q:"Who actually feels the pain when packaging fails?", hint:"That person is your champion." },
+        { q:"Who has budget authority and at what dollar threshold?", fk:["PRICE"] }
+      ]},
+      { q:"Growing, flat, or shrinking?", fk:["QTY"], hint:"Future volume changes how hard you invest now." }
+    ]
+  },
+  {
+    n:2, title:"What do you buy?", job:"matrix", jobLabel:"Job 2 · Buy Matrix",
+    why:"The core SKU map. Loop this per product line. Everything they touch in, on, and around the box.",
+    fills:["DESCRIPTION","UNIT"],
+    branches:[
+      { q:"CORRUGATED: boxes or sheets?", id:"target-corrugated", fk:["DESCRIPTION"], hint:"Separate conversations. Work each lane fully before moving on.", children:[
+
+        /* ── BOXES ── */
+        { q:"BOXES", type:"section", children:[
+          { q:"Stock, custom, or both?", hint:"If both: discipline required: always work custom first, stock second. Reps drift toward stock. Don't let them.", children:[
+
+            /* ── CUSTOM FIRST ── */
+            { q:"CUSTOM BOXES. Work through each one before touching stock.", type:"section", children:[
+              { q:"⚠️ RULE: Printed = Custom only. There are no stock printed items.", type:"rule" },
+              { q:"Pick one custom item. Get the spec: dims, board grade, print.", fk:["DESCRIPTION"], hint:"One item at a time. Don't let them describe a pile all at once." },
+              { q:"Q7 check → How many per run?", fk:["QTY"], hint:"MOQ math starts here. Low-volume custom at MOQ once a year is a different conversation than a repeating run." },
+              { q:"Q3 check → How often do you run it: monthly, quarterly, once a year?", fk:["LEAD TIME"], hint:"This is the qualifier. Frequency × volume = whether it's worth the custom workflow.", children:[
+                { q:"Annual or MOQ-only → Note it. Quote if they push. Don't lead the account on this item.", type:"note" },
+                { q:"Repeating (monthly, bi-monthly, quarterly) → Pursue. Then the gate applies:", children:[
+                  { q:"⚠️ REQUIRED. Both must be complete before the Order Form is touched:", type:"gate", children:[
+                    { q:"Custom Item Checklist. Filled out and attached to the quote?", type:"required" },
+                    { q:"Signed Custom Item Agreement. On file before order is placed?", type:"required" }
+                  ]},
+                  { q:"Printed? Flexo, how many colors, plates on file?", fk:["DESCRIPTION","COST"], hint:"Plate ownership is the switching cost. Find out who holds the plates and where." }
+                ]}
+              ]},
+              { q:"Single, double, or triple wall? ECT or Mullen?", fk:["DESCRIPTION"] },
+              { q:"↩ Cycle to the next custom item and repeat from the top of this branch.", type:"loop", hint:"Don't return to stock until all custom items are worked through." }
+            ]},
+
+            /* ── STOCK SECOND ── */
+            { q:"STOCK BOXES. Return here after all custom items are cycled.", type:"section", children:[
+              { q:"Run rate (repeating) or one-off?", hint:"This single question sets how much time you invest in this item.", children:[
+                { q:"Run rate → Full Q3 / Q7 / Q4 / Q8 discovery. Blanket candidate. Treat it like a program.", fk:["QTY","LEAD TIME"] },
+                { q:"One-off → Quote it, then ask: are there other items that do repeat?", type:"note", hint:"One-offs sometimes mask a regular item the rep just hasn't found yet." }
+              ]},
+              { q:"Style: RSC, die-cut, half-slotted (HSC), or full-overlap (FOL)?", fk:["DESCRIPTION"] },
+              { q:"Single, double, or triple wall?", fk:["DESCRIPTION"] },
+              { q:"Board grade: ECT rating or Mullen / burst?", fk:["DESCRIPTION"], hint:"Over-spec'd? Down-gauge conversation = savings story for them or margin for us." },
+              { q:"All sizes. Get the cut sheet or have them list every SKU.", fk:["DESCRIPTION","QTY"] }
+            ]}
+          ]}
+        ]},
+
+        /* ── SHEETS ── */
+        { q:"SHEETS (corrugated sheet stock)", type:"section", children:[
+          { q:"Single-face, single-wall, or double-wall?", fk:["DESCRIPTION"] },
+          { q:"Run rate or one-off?", hint:"Same qualifier as stock boxes above. Sets your investment level." },
+          { q:"Do they cut or fabricate in-house from the sheets?", hint:"Yes = they're acting as a converter. May need blades, dies, or production supplies. That's a separate conversation." }
+        ]}
+
+      ]},
+      { q:"STRETCH FILM: load wrap and unitizing", id:"target-stretch", fk:["DESCRIPTION"], hint:"Will flagged this one, go deep.", children:[
+        { q:"Hand wrap or machine wrap?", fk:["DESCRIPTION","UNIT"], children:[
+          { q:"If machine: turntable, robot, or orbital wrapper?", fk:["DESCRIPTION"] },
+          { q:"What machine make/model? Film width it takes?", fk:["DESCRIPTION"] }
+        ]},
+        { q:"Gauge / mil? Cast or blown?", fk:["DESCRIPTION","COST"], hint:"Most are over-gauged. Down-gauge + pre-stretch = the savings pitch." },
+        { q:"Pre-stretch film? What % yield are they getting?", fk:["COST","GTM"], hint:"This is where the real cost-per-load story lives, not price per roll." },
+        { q:"Specialty: VGuard, vented, UVI, colored, banding film?", fk:["DESCRIPTION","GTM"], children:[
+          { q:"Standard specialty stock = quote normally.", type:"note" },
+          { q:"Custom printed, private-label, or custom-color film? Triggers the gate.", children:[
+            { q:"⚠️ Custom printed or custom-color stretch film = gate applies.", type:"gate", children:[
+              { q:"Custom Item Checklist completed?", type:"required" },
+              { q:"Signed Custom Item Agreement on file?", type:"required" },
+              { q:"Print proof or color spec approved?", type:"required" }
+            ]}
+          ]}
+        ]},
+        { q:"Rolls per month? Cost per roll AND cost per load?", fk:["QTY","PRICE"], hint:"Reframe from $/roll to $/load to win the value argument." }
+      ]},
+      { q:"TAPE: category, application, stock or custom?", id:"target-tape", fk:["DESCRIPTION"], hint:"Carton sealing dominates most accounts. Specialty tapes are higher-margin and stickier.", children:[
+
+        /* CARTON SEALING */
+        { q:"CARTON SEALING TAPE", type:"section", children:[
+          { q:"Adhesive type: acrylic, hot-melt, or water-activated (gummed)?", fk:["DESCRIPTION","COST"], hint:"Hot-melt sticks fast but fails in cold. Acrylic holds in cold storage. WAT is tamper-evident and grips recycled board.", children:[
+            { q:"Cold storage, refrigerated, or frozen? Cold-temperature acrylic only.", type:"note" },
+            { q:"High-recycled-content boxes? Hot-melt struggles. WAT or premium acrylic.", type:"note" }
+          ]},
+          { q:"Width: 2 inch, 3 inch, other?", fk:["DESCRIPTION","UNIT"] },
+          { q:"Mil thickness and tensile? Are they over-spec'd?", fk:["DESCRIPTION","COST"], hint:"Common down-gauge play. Reps default to heavy tape regardless of box weight. Match mil to box weight, save them money or take margin." },
+          { q:"Application: hand or machine?", fk:["DESCRIPTION","UNIT"], children:[
+            { q:"Hand. Dispenser type: pistol-grip, deck, H-stick?", fk:["DESCRIPTION"] },
+            { q:"Machine. Random or uniform case sealer? Make and model?", fk:["DESCRIPTION"], hint:"Tape spec must match the head. 3M-Matic, Wexxar, Combi each have specific tape requirements." },
+            { q:"Throughput: cases per hour, cases per shift?", fk:["QTY"], hint:"Drives roll count and reorder rhythm." }
+          ]},
+          { q:"Stock or custom?", hint:"Stock for clear, tan, white. Custom for any printed.", children:[
+
+            /* STOCK TAPE */
+            { q:"STOCK TAPE", type:"section", children:[
+              { q:"Run rate or one-off? Same qualifier as stock boxes.", hint:"Run rate is the blanket candidate." },
+              { q:"Cases per month they tape? Rolls per case?", fk:["QTY"] },
+              { q:"Color preference: clear, tan, white, or doesn't matter?", fk:["DESCRIPTION"] }
+            ]},
+
+            /* CUSTOM PRINTED TAPE */
+            { q:"CUSTOM PRINTED TAPE", type:"section", children:[
+              { q:"⚠️ RULE: Printed tape = Custom only. No stock printed tape.", type:"rule" },
+              { q:"Pick one printed tape item. Get the spec: width, color, message, # colors.", fk:["DESCRIPTION"] },
+              { q:"Q7 check. How many rolls per run?", fk:["QTY"], hint:"Printed tape MOQs are real. Below MOQ, the math may not work." },
+              { q:"Q3 check. How often do you reprint?", fk:["LEAD TIME"] },
+              { q:"Is it worth pursuing?", children:[
+                { q:"Annual or MOQ-only. Note it. Quote if pushed. Do not lead the account on this.", type:"note" },
+                { q:"Repeating. Pursue. Gate applies.", children:[
+                  { q:"⚠️ REQUIRED before the Order Form is touched:", type:"gate", children:[
+                    { q:"Custom Item Checklist completed and attached?", type:"required" },
+                    { q:"Signed Custom Item Agreement on file?", type:"required" },
+                    { q:"Print proof or artwork received and approved?", type:"required" }
+                  ]},
+                  { q:"Plate or cylinder ownership. Who holds them, where?", fk:["DESCRIPTION","COST"], hint:"Same switching-cost logic as printed corrugated. Plate location locks the incumbent or unlocks the switch." }
+                ]}
+              ]},
+              { q:"↩ Cycle to the next printed tape item. Repeat.", type:"loop" }
+            ]}
+          ]}
+        ]},
+
+        /* SPECIALTY TAPES */
+        { q:"SPECIALTY TAPES", type:"section", children:[
+          { q:"Filament tape (heavy unit-load bundling)?", fk:["DESCRIPTION"] },
+          { q:"Strapping tape (light bundling)?", fk:["DESCRIPTION"] },
+          { q:"Masking tape (paint, auto refinishing, manufacturing)?", fk:["DESCRIPTION"], hint:"Auto and paint shops burn through masking. Worth its own branch if that's their industry." },
+          { q:"Double-sided or mounting tape?", fk:["DESCRIPTION"] },
+          { q:"Anti-static or ESD tape (electronics)?", fk:["DESCRIPTION"] },
+          { q:"Tamper-evident or security tape?", fk:["DESCRIPTION"], hint:"High-margin niche. Ask about loss prevention and chain-of-custody pain." },
+          { q:"For each specialty tape, run the same stock-vs-custom qualifier. Custom triggers the same gate.", type:"loop" }
+        ]}
+      ]},
+      { q:"VOID FILL & DUNNAGE?", fk:["DESCRIPTION"], children:[
+        { q:"Air pillows, paper, peanuts, foam-in-place?", fk:["DESCRIPTION"] },
+        { q:"Damage rate driving the choice?", hint:"High damage = protective-packaging redesign opportunity." }
+      ]},
+      { q:"PROTECTIVE: foam, bubble, edge?", id:"target-foam", fk:["DESCRIPTION"], children:[
+
+        /* FOAM */
+        { q:"FOAM", type:"section", children:[
+          { q:"Stock rolls and sheets, custom fabricated pieces, or both?", hint:"Most accounts use both. Same discipline as boxes. Work stock first, custom second. Custom is where the margin lives.", children:[
+
+            /* STOCK FOAM */
+            { q:"STOCK FOAM (rolls and sheets)", type:"section", children:[
+              { q:"Material type?", fk:["DESCRIPTION"], children:[
+                { q:"Polyethylene (PE). Most common, light protection, closed-cell.", fk:["DESCRIPTION"] },
+                { q:"Polyurethane (PU). Softer, conforming, surface protection.", fk:["DESCRIPTION"] },
+                { q:"Expanded polystyrene (EPS). Rigid, cheap, blocks and corners.", fk:["DESCRIPTION"] },
+                { q:"Expanded polypropylene (EPP). Durable, recyclable, premium.", fk:["DESCRIPTION","COST"] },
+                { q:"Crosslinked PE. Denser, finer cell, higher-end appearance.", fk:["DESCRIPTION","COST"] }
+              ]},
+              { q:"Density and firmness needed for the product weight?", fk:["DESCRIPTION"], hint:"Wrong density = damage claims. Match foam to product weight, not to what they've always used." },
+              { q:"Thickness: 1/8\", 1/4\", 1/2\", 1\", 2\" or thicker?", fk:["DESCRIPTION","UNIT"] },
+              { q:"Anti-static or ESD required?", fk:["DESCRIPTION"], hint:"Electronics, circuit boards, sensitive components. Pink poly is the visual cue." },
+              { q:"Roll or sheet? Width and length?", fk:["DESCRIPTION","UNIT"] },
+              { q:"Run rate or one-off?", hint:"Same qualifier as stock boxes.", children:[
+                { q:"Run rate. Rolls or sheets per month? Blanket candidate.", fk:["QTY"] },
+                { q:"One-off. Quote it, then ask what they keep on hand normally.", type:"note" }
+              ]}
+            ]},
+
+            /* CUSTOM FABRICATED FOAM */
+            { q:"CUSTOM FABRICATED FOAM", type:"section", children:[
+              { q:"⚠️ RULE: Custom fabricated foam = Custom workflow. Gate applies on every fabricated piece, regardless of size.", type:"rule" },
+              { q:"Pick one custom foam item. Get the spec.", fk:["DESCRIPTION"], children:[
+                { q:"Fabrication method?", fk:["DESCRIPTION"], children:[
+                  { q:"Die-cut inserts (flat or layered)?", fk:["DESCRIPTION","COST"], hint:"Die cost is one-time. Die ownership matters. Find out who paid for it and where it lives." },
+                  { q:"CNC routed or waterjet, 3D cavities?", fk:["DESCRIPTION","COST"], hint:"Higher-margin, longer lead times, sample or CAD always required." },
+                  { q:"Convoluted (egg-crate)?", fk:["DESCRIPTION"] },
+                  { q:"Laminated layers (two-density, foam-on-foam, foam-to-bag)?", fk:["DESCRIPTION"] },
+                  { q:"Heat-formed or molded?", fk:["DESCRIPTION","COST"] }
+                ]},
+                { q:"Sample, drawing, or CAD file available?", fk:["DESCRIPTION"], hint:"You cannot quote custom foam without one. Push for it before doing anything else." },
+                { q:"Tooling. Does the customer own the die, or does the current vendor?", fk:["COST"], hint:"Vendor-owned die = the incumbent's moat. Customer-owned die = portable. Worth a direct ask." }
+              ]},
+              { q:"Q7 check. Pieces per run?", fk:["QTY"] },
+              { q:"Q3 check. How often do they run it?", fk:["LEAD TIME"] },
+              { q:"Is it worth pursuing?", children:[
+                { q:"One-time project or annual MOQ-only. Quote if they push, no further investment.", type:"note" },
+                { q:"Repeating. Pursue. Gate applies.", children:[
+                  { q:"⚠️ REQUIRED before the Order Form is touched:", type:"gate", children:[
+                    { q:"Custom Item Checklist completed (foam section)?", type:"required" },
+                    { q:"Signed Custom Item Agreement on file?", type:"required" },
+                    { q:"Sample or CAD file received and on file?", type:"required" },
+                    { q:"Die or tooling location and ownership documented?", type:"required" }
+                  ]}
+                ]}
+              ]},
+              { q:"↩ Cycle to the next custom foam item. Repeat from the top.", type:"loop" }
+            ]}
+          ]}
+        ]},
+
+        /* BUBBLE */
+        { q:"BUBBLE WRAP", type:"section", children:[
+          { q:"Standard, anti-static (pink), or barrier (metallic / film-laminated)?", fk:["DESCRIPTION"] },
+          { q:"Bubble size: 3/16\" (small), 5/16\" (medium), 1/2\" (large)?", fk:["DESCRIPTION"], hint:"Bigger bubble = more cushioning, less product per roll, more freight cube. Right-size to the product." },
+          { q:"Perforated for tear-off at intervals?", fk:["DESCRIPTION"] },
+          { q:"Roll, bag, or pre-made pouch?", fk:["DESCRIPTION","UNIT"] },
+          { q:"Run rate or one-off?", hint:"Same qualifier." },
+          { q:"Custom-printed bubble or custom-sized pouches?", hint:"Yes triggers the gate. No is stock workflow.", children:[
+            { q:"⚠️ Custom-printed or custom-sized bubble = gate applies.", type:"gate", children:[
+              { q:"Custom Item Checklist completed?", type:"required" },
+              { q:"Signed Custom Item Agreement on file?", type:"required" }
+            ]}
+          ]}
+        ]},
+
+        /* EDGE */
+        { q:"EDGE AND CORNER PROTECTION", type:"section", children:[
+          { q:"Cardboard edge boards (paperboard L's, U's, T's)?", fk:["DESCRIPTION"] },
+          { q:"Plastic or foam corner protectors?", fk:["DESCRIPTION"] },
+          { q:"Standard length stock, or custom-cut to their load size?", hint:"Custom-cut = gate applies.", children:[
+            { q:"⚠️ Custom-cut edge protection = gate applies.", type:"gate", children:[
+              { q:"Custom Item Checklist completed?", type:"required" },
+              { q:"Signed Custom Item Agreement on file?", type:"required" }
+            ]}
+          ]}
+        ]}
+      ]},
+      { q:"STRAPPING & BANDING?", fk:["DESCRIPTION"], children:[
+        { q:"Poly, polyester (PET), or steel? Break strength?", fk:["DESCRIPTION"] },
+        { q:"Tools, seals, or battery tensioner?", fk:["DESCRIPTION","COST"] }
+      ]},
+      { q:"PALLETS?", fk:["DESCRIPTION"], children:[
+        { q:"Material: wood (new or recycled), plastic, presswood, or composite?", fk:["DESCRIPTION","COST"] },
+        { q:"Stringer or block construction? Number of stringers?", fk:["DESCRIPTION"] },
+        { q:"Standard 48x40 GMA, or custom size?", fk:["DESCRIPTION"], children:[
+          { q:"Standard GMA. Run rate or one-off?", hint:"Repeating GMA = blanket candidate. Full truckload changes the freight math." },
+          { q:"Custom size (any non-GMA dimension)?", children:[
+            { q:"⚠️ Custom-size pallets = gate applies. Spec drift on dimensions kills the order.", type:"gate", children:[
+              { q:"Custom Item Checklist completed with exact dimensions?", type:"required" },
+              { q:"Signed Custom Item Agreement on file?", type:"required" },
+              { q:"Spec drawing or physical sample reviewed?", type:"required" }
+            ]}
+          ]}
+        ]},
+        { q:"Exporting internationally?", fk:["DESCRIPTION"], hint:"Export to most countries requires ISPM-15 heat-treated, stamped wood. Plastic and presswood are exempt." },
+        { q:"Capacity: static load and dynamic load rating required?", fk:["DESCRIPTION"], hint:"Wrong rating = failed loads, damage, claims." },
+        { q:"Volume per month and storage cycle?", fk:["QTY","LEAD TIME"] }
+      ]},
+      { q:"CHIP BOARD. Solid paperboard, what's the application?", fk:["DESCRIPTION"], hint:"Lower margin per piece but high-frequency reorder. Often paired with corrugated orders.", children:[
+        { q:"Application?", children:[
+          { q:"Dividers and partitions inside cartons?", fk:["DESCRIPTION"] },
+          { q:"Slip sheets for palletizing or stacking?", fk:["DESCRIPTION"] },
+          { q:"Backers or stiffeners for shipping flat items?", fk:["DESCRIPTION"] },
+          { q:"Layer pads or pallet caps?", fk:["DESCRIPTION"] },
+          { q:"Rigid mailers or folders?", fk:["DESCRIPTION"] }
+        ]},
+        { q:"Caliper (point) thickness?", fk:["DESCRIPTION"], hint:"Measured in points. 1pt = 0.001\". 18pt to 30pt common for stiffeners. 50pt+ for heavy-duty layer pads." },
+        { q:"Standard cut sheet, or custom-cut and scored?", fk:["DESCRIPTION"], children:[
+          { q:"Standard sheet. Run rate or one-off?", hint:"Slip sheets often run weekly. Blanket candidate." },
+          { q:"Custom-cut, scored, or die-cut?", children:[
+            { q:"⚠️ Custom-cut chip board = gate applies.", type:"gate", children:[
+              { q:"Custom Item Checklist completed?", type:"required" },
+              { q:"Signed Custom Item Agreement on file?", type:"required" },
+              { q:"Die or template on file?", type:"required" }
+            ]}
+          ]}
+        ]},
+        { q:"Sheets per month, sheets per pallet of finished product?", fk:["QTY"] }
+      ]},
+
+      { q:"JANITORIAL. Recurring supply, high-frequency reorder, side-door to procurement.", fk:["DESCRIPTION"], hint:"Often the wedge into accounts that have already locked corrugated. Win jan-san, expand into the rest.", children:[
+        { q:"Can liners and trash bags?", fk:["DESCRIPTION"], children:[
+          { q:"Material: LDPE, HDPE, or contractor-grade?", fk:["DESCRIPTION"], hint:"HDPE = thin and strong against punctures. LDPE = thicker, more puncture-resistant for sharps." },
+          { q:"Size: 33gal, 45gal, 55gal, custom?", fk:["DESCRIPTION","UNIT"] },
+          { q:"Gauge or mil thickness?", fk:["DESCRIPTION","COST"], hint:"Common over-spec area. Match gauge to weight, not habit." },
+          { q:"Color: clear, black, or color-coded for waste streams?", fk:["DESCRIPTION"] },
+          { q:"Cases per month? Per location if multi-site?", fk:["QTY"] }
+        ]},
+        { q:"Paper goods. Towels, tissue, dispensers?", fk:["DESCRIPTION"], children:[
+          { q:"Towel format: roll, multifold, C-fold, center-pull?", fk:["DESCRIPTION"] },
+          { q:"Dispenser-locked (proprietary) or open spec?", fk:["DESCRIPTION","VENDOR"], hint:"Dispenser-locked is the incumbent's moat. Open spec is the wedge. Find out who installed the dispensers." },
+          { q:"Toilet tissue: standard, jumbo, coreless?", fk:["DESCRIPTION"] },
+          { q:"Hand towels: brown or white? Recycled content required?", fk:["DESCRIPTION"] }
+        ]},
+        { q:"Cleaning chemicals?", fk:["DESCRIPTION"], children:[
+          { q:"Categories: degreaser, glass, multipurpose, sanitizer, disinfectant, floor care?", fk:["DESCRIPTION"] },
+          { q:"Concentrate or ready-to-use?", fk:["DESCRIPTION","COST"], hint:"Concentrate = lower freight per use and higher margin. Push it." },
+          { q:"Dispenser or dilution system in place?", fk:["DESCRIPTION","VENDOR"] },
+          { q:"EPA registration / green certification required?", fk:["DESCRIPTION"] }
+        ]},
+        { q:"Hand soap, sanitizer, foam, bar?", fk:["DESCRIPTION"], children:[
+          { q:"Proprietary or open-fill dispensers?", fk:["VENDOR"], hint:"Lock-in vs wedge. Same dispenser logic as paper goods." }
+        ]},
+        { q:"Mops, brooms, buckets, hard surface tools?", fk:["DESCRIPTION"] },
+        { q:"Floor care: finish, stripper, wax, sealers?", fk:["DESCRIPTION"] },
+        { q:"Disposable gloves, wipes, rags?", fk:["DESCRIPTION"] }
+      ]},
+
+      { q:"SAFETY GEAR. PPE is regulated, sized, and often industry-specific.", fk:["DESCRIPTION"], hint:"Frequent reorder. Strong wedge for safety-sensitive accounts. Ask about their OSHA recordable rate to find the pain.", children:[
+        { q:"Eye protection. Safety glasses, goggles, face shields?", fk:["DESCRIPTION"], children:[
+          { q:"Standard, tinted, or laser-rated?", fk:["DESCRIPTION"] },
+          { q:"Prescription inserts or over-the-glass needed?", fk:["DESCRIPTION"] }
+        ]},
+        { q:"Hand protection. Gloves?", fk:["DESCRIPTION"], children:[
+          { q:"Cut-resistant. Which ANSI cut level (A1 to A9)?", fk:["DESCRIPTION"], hint:"Levels mean specific tested gram values. Reps confuse them constantly." },
+          { q:"Chemical-resistant. Which chemicals are they handling?", fk:["DESCRIPTION"] },
+          { q:"Disposable: nitrile, latex, vinyl?", fk:["DESCRIPTION","UNIT"], hint:"Nitrile is dominant post-pandemic. Latex allergies common." },
+          { q:"Heat or cold protection?", fk:["DESCRIPTION"] },
+          { q:"Sizing distribution. What sizes do they run through the most?", fk:["QTY"] }
+        ]},
+        { q:"Head protection. Hard hats?", fk:["DESCRIPTION"], children:[
+          { q:"Type I (top impact) or Type II (lateral impact)?", fk:["DESCRIPTION"] },
+          { q:"Class E, G, or C?", fk:["DESCRIPTION"], hint:"E = high-voltage electrical. G = general. C = no electrical protection." },
+          { q:"Accessories: chin straps, brim covers, faceshield mounts?", fk:["DESCRIPTION"] }
+        ]},
+        { q:"Hi-vis apparel. Vests, shirts, jackets, rainwear?", fk:["DESCRIPTION"], children:[
+          { q:"ANSI Class 2 or Class 3?", fk:["DESCRIPTION"], hint:"Class 3 required for highway speeds above 25mph. Know which applies." },
+          { q:"Custom-logo or printed?", children:[
+            { q:"⚠️ Custom-printed hi-vis = gate applies.", type:"gate", children:[
+              { q:"Custom Item Checklist completed?", type:"required" },
+              { q:"Signed Custom Item Agreement on file?", type:"required" },
+              { q:"Logo / art file approved?", type:"required" }
+            ]}
+          ]}
+        ]},
+        { q:"Hearing protection. Earplugs, muffs, banded?", fk:["DESCRIPTION"], children:[
+          { q:"Disposable or reusable?", fk:["UNIT"] },
+          { q:"NRR rating required by their dB exposure?", fk:["DESCRIPTION"] }
+        ]},
+        { q:"Respiratory protection?", fk:["DESCRIPTION"], hint:"Half-face and full-face = fit testing program required. A whole separate conversation, but a sticky one if they need it.", children:[
+          { q:"Dust masks, N95, half-face, or full-face?", fk:["DESCRIPTION"] },
+          { q:"Cartridges and filters?", fk:["DESCRIPTION"] }
+        ]},
+        { q:"Foot protection. Steel-toe boots, overshoes, metatarsal guards?", fk:["DESCRIPTION"] },
+        { q:"First aid kits and refills?", fk:["DESCRIPTION"], hint:"ANSI Class A or Class B? Industry-specific kit?" },
+        { q:"Spill kits. Universal, oil-only, or hazmat?", fk:["DESCRIPTION"] },
+        { q:"Lockout / tagout tags, locks, hasps?", fk:["DESCRIPTION"] },
+        { q:"Box cutters, safety knives, replacement blades?", fk:["DESCRIPTION"], hint:"Often bundled with safety. Self-retracting models reduce claims. Worth pushing." }
+      ]},
+
+      { q:"Anything custom or printed we should see a sample of?", fk:["DESCRIPTION","GTM"], hint:"Custom or printed is the moat. Always ask for the sample. Triggers the gate." }
+    ]
+  },
+  {
+    n:3, title:"How often do you order?", job:"matrix", jobLabel:"Job 2 · Buy Matrix",
+    why:"Annual run rate per SKU. Loops with Q7 to build QUANTITY. Drives blanket vs JIT.",
+    fills:["QTY","LEAD TIME"],
+    branches:[
+      { q:"Per top SKU: weekly, monthly, quarterly?", fk:["QTY"], hint:"Ask per item, not in general. Volumes differ wildly by SKU." },
+      { q:"Do they run Just-In-Time or hold buffer stock?", fk:["LEAD TIME"], children:[
+        { q:"How much storage space do they have?", hint:"No room = frequent small orders = our blanket + warehousing pitch." },
+        { q:"Min/max levels they keep on hand?", fk:["QTY"] }
+      ]},
+      { q:"Open to a Blanket Agreement on 90-day turns?", fk:["QTY","PRICE"], hint:"This is the Vision program. Locks volume, smooths their cash." },
+      { q:"Who triggers the reorder, and how? Auto or manual PO?", hint:"If manual + reactive, they've had stockouts. That's the reliability sell." },
+      { q:"Ever been stuck out of a packaging item? What did it cost them?", hint:"Quantify the downtime. Reliability outsells price." }
+    ]
+  },
+  {
+    n:4, title:"What do you pay?", job:"matrix", jobLabel:"Job 2 · Buy Matrix",
+    why:"Tells you where price needs to land. Sets target PRICE and TERMS. Pull the last invoice.",
+    fills:["PRICE","TERMS","GTM"],
+    branches:[
+      { q:'"Can you pull your last invoice?"', fk:["PRICE","COST"], hint:"The single most valuable artifact in the call. Push for it.", script:'Give me your best price is typical. If you tell me where I need to be, I can go to my vendors and fight for it.' },
+      { q:"Price per unit on the volume movers?", fk:["PRICE"] },
+      { q:"Price-driven or value/service-driven buyer?", hint:"Decides whether you lead with cost-per-load or reliability." },
+      { q:"Current payment terms: Net 30, 60?", fk:["TERMS"], hint:"Terms can be a lever even when price can't move." },
+      { q:"Eaten any resin or freight surcharges lately?", fk:["COST"], hint:"Recent pain = openness to switch. Tie to market data." },
+      { q:"Where do you need me to be to win this?", fk:["PRICE","GTM"], hint:"Get the number. Then build the COST/GTM backward from it." }
+    ]
+  },
+  {
+    n:5, title:"Will you actually buy?", job:"qualify", jobLabel:"Job 1 · Qualify",
+    why:"The qualification gate. Protects your time. Real opportunity or quote-shopper?",
+    fills:["go / no-go"],
+    branches:[
+      { q:"Can we win SOME items, or is it win-all-or-nothing?", hint:"Land a beachhead SKU, then expand." },
+      { q:"Will you trial us. 4 cases of film before a full pallet?", fk:["QTY"], hint:"The low-risk yes. A trial commitment separates buyers from browsers." },
+      { q:"Quote-shopping to keep your vendor honest, or seriously looking?", hint:"Ask it directly. The honest answer saves you a week." },
+      { q:"Locked into a contract? When does it end?", fk:["LEAD TIME"], xref:[{label:"Q9 Renewal Date", target:"target-renewal"}], hint:"Feeds Q9 timing." },
+      { q:"What would actually make you switch?", hint:"If they can't answer, they won't switch. Disqualify or dig for real pain." }
+    ]
+  },
+  {
+    n:6, title:"How are you shipping items?", job:"next", jobLabel:"Job 3 · Next Move",
+    why:"How it leaves the dock. Fills FOB, SHIP VIA, WEIGHT. Will flagged this. Branch hard on every shipping mode.",
+    fills:["FOB","SHIP VIA","WEIGHT","DESCRIPTION"],
+    branches:[
+      { q:"Carrier mode?", fk:["SHIP VIA","FOB"], children:[
+        { q:"Parcel: FedEx, UPS, USPS?", fk:["SHIP VIA"], children:[
+          { q:"Getting hit on dimensional weight?", fk:["DESCRIPTION"], hint:"Right-size boxes = direct freight savings = our hook." }
+        ]},
+        { q:"LTL, full truckload, or own fleet?", fk:["SHIP VIA","FOB"] }
+      ]},
+      { q:"Palletized?", fk:["WEIGHT","DESCRIPTION"], children:[
+        { q:"Pallet type and size? Weight per pallet?", fk:["WEIGHT","DESCRIPTION"] },
+        { q:"How high do they stack? Stack pattern?", hint:"Tall/unstable loads = stretch + edge protect + banding redesign." },
+        { q:"How are loads unitized: stretch, strap, both?", fk:["DESCRIPTION"], xref:[{label:"Q2 Stretch Film", target:"target-stretch"}], children:[
+          { q:"Hand or machine wrap on the load?", fk:["DESCRIPTION"], hint:"Loops back to Q2 stretch-film branch." },
+          { q:"Film gauge on the load? Over-wrapping (revolutions)?", fk:["COST"], hint:"Wrap audit = quantifiable savings story." }
+        ]}
+      ]},
+      { q:"How far is it going?", fk:["FOB","DESCRIPTION"], children:[
+        { q:"Local, regional, national, or export?", fk:["FOB"], children:[
+          { q:"Export → ISPM-15 heat-treated pallets? Container or break-bulk?", fk:["DESCRIPTION"] }
+        ]},
+        { q:"Long transit = more handling = more damage exposure.", hint:"Distance justifies protective upgrades." }
+      ]},
+      { q:"Environmental exposure in transit?", fk:["DESCRIPTION"], children:[
+        { q:"Weather exposed? Outdoor staging?", fk:["DESCRIPTION"], hint:"Moisture-resistant board, wax/poly coat, shrink." },
+        { q:"Cold rooms / frozen / refrigerated?", fk:["DESCRIPTION"], hint:"Wet-strength board, adhesive performance at temp matters." },
+        { q:"High humidity? Metal parts (rust)?", fk:["DESCRIPTION"], hint:"VCI paper/film + desiccant." }
+      ]},
+      { q:"Damage / claims history on shipments?", hint:"Existing damage = the single best opening to redesign and add margin.", fk:["GTM"] },
+      { q:"Dock equipment: forklift, pallet jack, manual?", hint:"Affects unit size and palletization advice." }
+    ]
+  },
+  {
+    n:7, title:"How much do you buy?", job:"matrix", jobLabel:"Job 2 · Buy Matrix",
+    why:"Order size per item. Loops with Q3 to size the annual. The more they buy, the better the price.",
+    fills:["QTY","UNIT","PRICE"],
+    branches:[
+      { q:"Typical order size per SKU: eaches, cases, pallets, truckloads?", fk:["QTY","UNIT"], hint:"Volume tier sets the price break and our cost negotiation." },
+      { q:"Annual volume on the top 3 movers?", fk:["QTY"], hint:"80/20 rule: find where the spend actually concentrates." },
+      { q:"Busy season vs slow season?", fk:["QTY"], hint:"Pre-buy / seasonal blanket opportunity." },
+      { q:"Purchased how: by count, by pound, by roll, by load?", fk:["UNIT"], hint:"Match our UNIT to how they think to avoid quote confusion." },
+      { q:"Total annual packaging spend, ballpark?", fk:["QTY","GTM"], hint:"Sizes the prize and your effort level." }
+    ]
+  },
+  {
+    n:8, title:"Who do you buy from?", job:"matrix", jobLabel:"Job 2 · Buy Matrix",
+    why:"The competitive map. Loops back into Q2 per vendor. Knowing the source tells us where to win.",
+    fills:["VENDOR","COST"],
+    branches:[
+      { q:"List every vendor (could be one, could be five).", id:"target-vendors", fk:["VENDOR"], hint:"Then loop each one back through the questions below.", children:[
+        { q:"What category does each vendor own?", fk:["VENDOR"], xref:[{label:"Q2 Buy Matrix", target:"q-2"}], hint:"Loops to Q2. What from whom." },
+        { q:"Distributor or manufacturer-direct on each?", fk:["COST","VENDOR"], hint:"Direct = price-driven and harder; distributor = service gaps to exploit." },
+        { q:"Why that vendor: price, service, geography, sole-source?", hint:"Find the dissatisfaction. There's always a soft spot." },
+        { q:"Any sole-source risk that scares them?", hint:"Single-source = our reliability / second-source pitch." },
+        { q:"Local or national? How's the rep relationship?", hint:"Weak rep coverage = open door." }
+      ]},
+      { q:"Anyone they've fired before and why?", hint:"Tells you the dealbreakers to avoid and the gaps to fill." }
+    ]
+  },
+  {
+    n:9, title:"When will you order again?", job:"next", jobLabel:"Job 3 · Next Move",
+    why:"The displacement window. Fills LEAD TIME and sets your re-quote timing.",
+    fills:["LEAD TIME","ORDER DATE"],
+    branches:[
+      { q:"When's the next PO going out?", fk:["LEAD TIME","ORDER DATE"] },
+      { q:"Where's current inventory. Burning down or just restocked?", hint:"Just restocked = play the long game and schedule the follow-up." },
+      { q:"Manufacturer lead times they live with today?", fk:["LEAD TIME"], hint:"If we beat their lead time, that's a wedge." },
+      { q:"Contract / agreement renewal date?", id:"target-renewal", fk:["LEAD TIME"], hint:"Best displacement timing. Mark the calendar now." },
+      { q:'The displacement line.', script:'Place this order with your current vendor, and let us quote the items you ordered and the rest of your floor for next time.' }
+    ]
+  },
+  {
+    n:10, title:"Who else does what you do?", job:"qualify", jobLabel:"Job 1 · Qualify",
+    why:"Turns one account into a vertical. Become the supplier for the whole category.",
+    fills:["pipeline"],
+    branches:[
+      { q:"Who are your competitors in the area?", hint:"Same end-product = same packaging needs = warm-ish targets." },
+      { q:"Who are your partners or supply-chain neighbors?", hint:"Their suppliers and customers also ship things." },
+      { q:"Anyone you'd introduce us to if we take care of you?", hint:"Ask for the referral while goodwill is fresh." },
+      { q:"Sister companies or other divisions?", id:"target-sisters", fk:["VENDOR"], xref:[{label:"Q1 Locations", target:"target-multi-location"}], hint:"Loops to Q1 multi-location." }
+    ]
+  }
+];
+
+/* =========================================================================
+   RENDER
+   ========================================================================= */
+const tree = document.getElementById('tree');
+
+function fkTags(fk){
+  if(!fk || !fk.length) return '';
+  return fk.map(f=>`<span class="nfk">${f}</span>`).join('');
+}
+
+function xrefChips(refs){
+  if(!refs || !refs.length) return '';
+  return refs.map(r=>`<span class="xref" data-target="${r.target}">${r.label}</span>`).join('');
+}
+
+function renderNode(node){
+  const hasKids = node.children && node.children.length;
+  const el = document.createElement('div');
+  el.className = 'node' + (hasKids ? ' has-children' : '') + (node.type ? ' type-' + node.type : '');
+  if(node.id) el.id = node.id;
+  let html = `<div class="nrow"><span class="nq">${node.q}</span>${node.fk?fkTags(node.fk):''}${xrefChips(node.xref)}${hasKids?'<span class="ntoggle"></span>':''}`;
+  if(node.hint) html += `<span class="nhint">${node.hint}</span>`;
+  html += `</div>`;
+  if(node.script){
+    html += `<div class="script"><b>Say it like this</b>${node.script}</div>`;
+  }
+  el.innerHTML = html;
+  if(hasKids){
+    const kids = document.createElement('div');
+    kids.className = 'children';
+    node.children.forEach(c=>kids.appendChild(renderNode(c)));
+    el.appendChild(kids);
+    el.querySelector('.nrow').addEventListener('click',(e)=>{
+      e.stopPropagation();
+      el.classList.toggle('open');
+    });
+  }
+  return el;
+}
+
+DATA.forEach(qd=>{
+  const q = document.createElement('div');
+  q.className = 'q';
+  q.id = 'q-' + qd.n;
+  q.dataset.job = qd.job;
+  q.dataset.search = JSON.stringify(qd).toLowerCase();
+
+  const fills = qd.fills.map(f=>`<span class="fk">${f}</span>`).join('');
+  q.innerHTML = `
+    <div class="qhead">
+      <div class="qnum">${qd.n}</div>
+      <div class="qtext">
+        <p class="qtitle">${qd.title}</p>
+        <p class="qwhy">${qd.why}</p>
+        <span class="qjob job-${qd.job}">${qd.jobLabel}</span>
+      </div>
+      <svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 6 15 12 9 18"/></svg>
+    </div>
+    <div class="qbody">
+      <div class="fills"><span class="flabel">Fills →</span>${fills}</div>
+      <div class="branch"></div>
+    </div>`;
+
+  const branchHost = q.querySelector('.branch');
+  qd.branches.forEach(b=>branchHost.appendChild(renderNode(b)));
+
+  q.querySelector('.qhead').addEventListener('click',()=>q.classList.toggle('open'));
+  tree.appendChild(q);
+});
+
+/* ---- controls ---- */
+const qs = [...document.querySelectorAll('.q')];
+/* ---- cross-reference jumps ---- */
+document.addEventListener('click', (e) => {
+  const chip = e.target.closest('.xref');
+  if(!chip) return;
+  e.stopPropagation();
+  const target = document.getElementById(chip.dataset.target);
+  if(!target) return;
+  // walk up and open every collapsed ancestor
+  let cur = target;
+  while(cur){
+    if(cur.classList && (cur.classList.contains('node') || cur.classList.contains('q'))){
+      cur.classList.add('open');
+    }
+    cur = cur.parentElement;
+  }
+  // scroll into view, then flash
+  setTimeout(()=>{
+    target.scrollIntoView({behavior:'smooth', block:'center'});
+    target.classList.add('xref-flash');
+    setTimeout(()=>target.classList.remove('xref-flash'), 1800);
+  }, 60);
+});
+
+/* ---- expand / collapse ---- */
+document.getElementById('expandAll').addEventListener('click',()=>{
+  qs.forEach(q=>q.classList.add('open'));
+  document.querySelectorAll('.node.has-children').forEach(n=>n.classList.add('open'));
+});
+document.getElementById('collapseAll').addEventListener('click',()=>{
+  qs.forEach(q=>q.classList.remove('open'));
+  document.querySelectorAll('.node.has-children').forEach(n=>n.classList.remove('open'));
+  updateBreadcrumb(null);
+});
+
+/* ---- job filter (click model cell to filter questions to that job) ---- */
+const jobCells = document.querySelectorAll('.cell.job-cell');
+let activeJob = null;
+jobCells.forEach(cell=>{
+  cell.addEventListener('click', ()=>{
+    const job = cell.dataset.job;
+    if(activeJob === job){
+      // deactivate (show all)
+      jobCells.forEach(c=>c.classList.remove('is-active'));
+      qs.forEach(q=>q.classList.remove('hidden-by-job'));
+      activeJob = null;
+    } else {
+      jobCells.forEach(c=>c.classList.toggle('is-active', c===cell));
+      qs.forEach(q=>q.classList.toggle('hidden-by-job', q.dataset.job !== job));
+      activeJob = job;
+    }
+  });
+});
+
+/* ---- essentials mode (training filter, hides deep coaching detail) ---- */
+function markEssentials(){
+  const allNodes = document.querySelectorAll('#tree .node');
+  // Pass 1: direct essentials by rule
+  allNodes.forEach(n=>{
+    n.classList.remove('essential');
+    const isStructural = n.classList.contains('type-section')
+      || n.classList.contains('type-gate')
+      || n.classList.contains('type-rule')
+      || n.classList.contains('type-required')
+      || n.classList.contains('type-loop');
+    const hasFk = n.querySelector(':scope > .nrow > .nfk') !== null;
+    const isTopBranch = n.parentElement && n.parentElement.classList.contains('branch');
+    if(isStructural || hasFk || isTopBranch){
+      n.classList.add('essential');
+    }
+  });
+  // Pass 2: ancestors of essentials become essential
+  let changed = true;
+  while(changed){
+    changed = false;
+    allNodes.forEach(n=>{
+      if(n.classList.contains('essential')) return;
+      if(n.querySelector('.essential')){
+        n.classList.add('essential');
+        changed = true;
+      }
+    });
+  }
+}
+markEssentials();
+
+const essentialsBtn = document.getElementById('essentialsToggle');
+essentialsBtn.addEventListener('click', ()=>{
+  const tree = document.getElementById('tree');
+  const on = tree.classList.toggle('essentials-on');
+  essentialsBtn.classList.toggle('is-active', on);
+  essentialsBtn.textContent = on ? 'Show everything' : 'Essentials only';
+  if(on){
+    // auto-expand so the essentials trail is visible
+    qs.forEach(q=>{ if(!q.classList.contains('hidden-by-job')) q.classList.add('open'); });
+    document.querySelectorAll('.node.has-children.essential').forEach(n=>n.classList.add('open'));
+  }
+});
+
+/* ---- breadcrumb (sticky trail showing where you are) ---- */
+const breadcrumb = document.getElementById('breadcrumb');
+function updateBreadcrumb(target){
+  if(!target){
+    breadcrumb.innerHTML = '<span class="breadcrumb-empty">Click any question to start. Your trail will show here.</span>';
+    breadcrumb._path = null;
+    return;
+  }
+  const path = [];
+  let cur = target;
+  while(cur && cur !== document.body){
+    if(cur.classList && cur.classList.contains('q')){
+      const num = cur.querySelector('.qnum').textContent.trim();
+      const title = cur.querySelector('.qtitle').textContent.trim();
+      path.unshift({text:'Q'+num+' '+title.toLowerCase(), el:cur});
+    } else if(cur.classList && cur.classList.contains('node')){
+      const nq = cur.querySelector(':scope > .nrow > .nq');
+      if(nq){
+        let t = nq.textContent.trim();
+        if(t.length > 42) t = t.substring(0,40)+'…';
+        path.unshift({text:t, el:cur});
+      }
+    }
+    cur = cur.parentElement;
+  }
+  if(path.length === 0){
+    updateBreadcrumb(null);
+    return;
+  }
+  breadcrumb.innerHTML = path.map((p,i)=>{
+    const isLast = i === path.length-1;
+    if(isLast) return `<span class="breadcrumb-current">${p.text}</span>`;
+    return `<span class="breadcrumb-segment" data-idx="${i}">${p.text}</span><span class="breadcrumb-sep">›</span>`;
+  }).join('');
+  breadcrumb._path = path;
+}
+
+document.addEventListener('click',(e)=>{
+  // ignore the search field, xref chips, and breadcrumb itself
+  if(e.target.closest('.xref') || e.target.closest('.breadcrumb') || e.target.closest('.toolbar')) return;
+  const row = e.target.closest('.qhead, .nrow');
+  if(!row) return;
+  updateBreadcrumb(row.parentElement);
+});
+
+breadcrumb.addEventListener('click',(e)=>{
+  const seg = e.target.closest('.breadcrumb-segment');
+  if(!seg) return;
+  const idx = parseInt(seg.dataset.idx,10);
+  if(breadcrumb._path && breadcrumb._path[idx]){
+    const t = breadcrumb._path[idx].el;
+    t.scrollIntoView({behavior:'smooth', block:'center'});
+    t.classList.add('xref-flash');
+    setTimeout(()=>t.classList.remove('xref-flash'), 1800);
+    updateBreadcrumb(t);
+  }
+});
+
+/* ---- search with prev/next navigation across all matches ---- */
+const search = document.getElementById('search');
+const searchCounter = document.getElementById('searchCounter');
+const searchPrev = document.getElementById('searchPrev');
+const searchNext = document.getElementById('searchNext');
+let searchMatches = [];
+let searchIdx = 0;
+
+function clearSearchState(){
+  document.querySelectorAll('.search-hit, .search-current, .search-hit-q').forEach(n=>{
+    n.classList.remove('search-hit','search-current','search-hit-q');
+  });
+  searchMatches = [];
+  searchIdx = 0;
+  searchCounter.textContent = '';
+  searchPrev.disabled = true;
+  searchNext.disabled = true;
+}
+
+search.addEventListener('input',()=>{
+  const t = search.value.trim().toLowerCase();
+  clearSearchState();
+  if(!t){
+    qs.forEach(q=>{ q.classList.remove('hidden'); q.classList.remove('open'); });
+    document.querySelectorAll('.node.has-children').forEach(n=>n.classList.remove('open'));
+    return;
+  }
+  qs.forEach(q=>{
+    if(!q.dataset.search.includes(t)){
+      q.classList.add('hidden');
+      return;
+    }
+    q.classList.remove('hidden');
+    q.classList.add('open');
+    // find which specific nodes match
+    const nodes = q.querySelectorAll('.node');
+    nodes.forEach(n=>{
+      const nq = n.querySelector(':scope > .nrow > .nq');
+      if(nq && nq.textContent.toLowerCase().includes(t)){
+        n.classList.add('search-hit');
+        searchMatches.push(n);
+        // open ancestors so the hit is visible
+        let cur = n.parentElement;
+        while(cur && cur !== q){
+          if(cur.classList && cur.classList.contains('node') && cur.classList.contains('has-children')){
+            cur.classList.add('open');
+          }
+          cur = cur.parentElement;
+        }
+      }
+    });
+    // also check the question title itself
+    const qt = q.querySelector('.qtitle');
+    if(qt && qt.textContent.toLowerCase().includes(t)){
+      q.querySelector('.qhead').classList.add('search-hit-q');
+    }
+  });
+  updateSearchUI();
+});
+
+function updateSearchUI(){
+  if(searchMatches.length === 0){
+    searchCounter.textContent = search.value ? 'no matches in branches' : '';
+    searchPrev.disabled = true;
+    searchNext.disabled = true;
+    return;
+  }
+  document.querySelectorAll('.search-current').forEach(n=>n.classList.remove('search-current'));
+  searchCounter.textContent = (searchIdx+1)+' of '+searchMatches.length;
+  searchPrev.disabled = false;
+  searchNext.disabled = false;
+  const cur = searchMatches[searchIdx];
+  cur.classList.add('search-current');
+  cur.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+searchPrev.addEventListener('click',()=>{
+  if(searchMatches.length === 0) return;
+  searchIdx = (searchIdx - 1 + searchMatches.length) % searchMatches.length;
+  updateSearchUI();
+});
+searchNext.addEventListener('click',()=>{
+  if(searchMatches.length === 0) return;
+  searchIdx = (searchIdx + 1) % searchMatches.length;
+  updateSearchUI();
+});
+search.addEventListener('keydown',(e)=>{
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    if(e.shiftKey) searchPrev.click(); else searchNext.click();
+  }
+});
+
+/* ---- footer meta ---- */
+function count(nodes){let c=0;nodes.forEach(n=>{c++;if(n.children)c+=count(n.children);});return c;}
+const total = DATA.reduce((a,q)=>a+count(q.branches),0);
+document.getElementById('meta').textContent = `10 openers · ${total} branches · click to expand`;
+</script>
+</body>
+</html>
