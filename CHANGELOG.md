@@ -5,6 +5,34 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ---
 
+## [Unreleased]
+
+Priority order for the next iteration. Pick from the top.
+
+### Planned
+- **Deepen Q6 (shipping).** Currently 20 branches, shallow compared to corrugated (226), tape, and foam. Bring to parity. Cover dunnage and load securement in transit, parcel-vs-LTL-vs-truckload cost dynamics, cube-utilization and DIM-weight optimization, accessorials, and damage-claim history as a discovery wedge.
+- **Deepen the strapping branch in Q2.** Currently minimal. Cover poly vs PET vs steel, break strength matching, hand vs battery vs pneumatic tools, seal types, and unitization patterns. Apply the same stock-vs-custom qualifier as the other Q2 categories.
+- **Hand-curate the essentials filter.** Replace the algorithmic `markEssentials()` rule in `index.html` with explicit `e:1` flags on hand-picked nodes in the DATA array. Target 6 to 10 essential branches per product category. The algorithm is a v0.4 placeholder, not the final approach.
+
+### Pending audit
+- v0.4 will be handed to Cliff (ChatGPT) for audit. When findings come back, apply them as v0.6.
+
+---
+
+## [v0.4.2] — 2026-06-05
+
+### Added
+- `AGENTS.md` as canonical agent context file, read by both Claude Code and Codex CLI
+- Dual-agent workflow protocol: commit-message prefixing convention (`[claude]` and `[codex]`), pre-flight git pull and log review, shared Unreleased todo list
+- Default role bias: Claude Code for building and extending, Codex CLI for auditing and bug-finding
+- PowerShell setup script (`setup-vsn-discovery.ps1`) for one-shot Windows install of both tools, repo clone, and initial publish
+
+### Changed
+- `CLAUDE.md` reduced to a 12-line pointer at `AGENTS.md` to maintain a single source of truth
+- `README.md` updated with "Working on this repo" section and new file structure
+
+---
+
 ## [v0.4] — 2026-06-05
 
 ### Added

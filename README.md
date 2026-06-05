@@ -80,11 +80,19 @@ The full schema is documented in a comment block directly above the DATA array i
 .
 ├── index.html         The whole tool, one file
 ├── README.md          This file
-├── CHANGELOG.md       Version history
+├── CHANGELOG.md       Version history with Unreleased todo
+├── AGENTS.md          Canonical context for AI coding agents (Claude Code, Codex CLI)
+├── CLAUDE.md          Thin pointer to AGENTS.md (Claude Code default lookup)
 ├── LICENSE            Proprietary, internal use
 ├── .gitignore         
 └── docs/              (planned) audit notes from Cliff and screenshots
 ```
+
+## Working on this repo
+
+This project is dual-coded by **Claude Code** and **Codex CLI**, with Will
+arbitrating. Both agents read `AGENTS.md` as their session brief. See that
+file for the workflow protocol, verification commands, and the data model schema.
 
 ## License
 
