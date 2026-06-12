@@ -6,7 +6,7 @@
 <title>The Ten Questions. Discovery Branch Logic</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#15130f;
@@ -330,32 +330,232 @@
   #essentialsToggle.is-active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
   #essentialsToggle.is-active::before{content:"●  ";color:var(--amber);}
 
+  /* ---------- v0.5 Packaging field manual system ---------- */
+  :root{
+    --ink:#171914;
+    --ink-2:#34372f;
+    --paper:#f1eee5;
+    --paper-2:#e7e2d5;
+    --kraft:#a9692f;
+    --kraft-deep:#74411d;
+    --amber:#e5a432;
+    --line:#c8c0ae;
+    --line-2:#9f9889;
+    --green:#355c45;
+    --muted:#6d6d63;
+    --field:#ddd2ba;
+    --signal:#e66b2e;
+    --red:#a43228;
+    --red-dark:#641e1a;
+    --white:#fbfaf6;
+    --shadow:0 16px 40px rgba(34,29,19,.08);
+    --rail:252px;
+  }
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      linear-gradient(rgba(23,25,20,.025) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(23,25,20,.025) 1px,transparent 1px),
+      var(--paper);
+    background-size:24px 24px;
+    font-family:'Archivo',sans-serif;
+  }
+  button,input{font:inherit;}
+  button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--amber);outline-offset:3px;}
+  .skip-link{position:fixed;top:8px;left:8px;z-index:100;background:var(--ink);color:var(--white);padding:9px 13px;transform:translateY(-150%);}
+  .skip-link:focus{transform:none;}
+  .wrap{max-width:1440px;padding:24px 28px 80px;}
+
+  header.masthead{
+    min-height:300px;border-width:1px;padding:30px 34px 28px;
+    display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:48px;
+  }
+  header.masthead::before{
+    background:
+      linear-gradient(90deg,transparent 0 68%,rgba(229,164,50,.08) 68% 68.15%,transparent 68.15%),
+      repeating-linear-gradient(90deg,rgba(255,255,255,.035) 0 1px,transparent 1px 24px);
+    opacity:1;
+  }
+  header.masthead::after{
+    content:"FIELD MANUAL  /  SALES TRAINING";
+    position:absolute;right:-112px;top:128px;transform:rotate(90deg);
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.24em;color:rgba(255,255,255,.28);
+  }
+  .cover-main{position:relative;align-self:end;}
+  .cover-meta{
+    position:relative;border-left:1px solid rgba(255,255,255,.22);
+    padding-left:22px;display:flex;flex-direction:column;justify-content:space-between;
+  }
+  .cover-meta p{margin:0;}
+  .cover-meta .issue{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#bcb9ad;}
+  .cover-meta .issue strong{display:block;color:var(--amber);font-size:27px;letter-spacing:-.04em;margin-top:6px;}
+  .cover-meta .status{border-top:1px solid rgba(255,255,255,.22);padding-top:14px;font-size:12px;color:#d8d3c7;}
+  .cover-meta .status b{display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.15em;color:var(--signal);text-transform:uppercase;margin-bottom:5px;}
+  .kicker{font-size:10px;letter-spacing:.24em;margin-bottom:38px;}
+  h1{font-family:'Archivo',sans-serif;font-weight:900;font-size:clamp(38px,5.2vw,72px);line-height:.86;letter-spacing:-.065em;}
+  h1 .thin{font-weight:500;color:#b97a43;letter-spacing:-.05em;}
+  .sub{margin-top:20px;max-width:67ch;font-size:14px;line-height:1.65;color:#cac6ba;}
+  .mantra{margin-top:25px;padding-top:13px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.15em;}
+  .mantra span{padding:0 8px;color:#77776f;}
+
+  .model{border-width:1px;}
+  .model .cell{min-height:150px;padding:20px;border-color:var(--line);background:rgba(241,238,229,.94);}
+  .model .ct{font-size:9px;letter-spacing:.16em;margin-bottom:22px;}
+  .model .ch{font-family:'Archivo',sans-serif;font-size:17px;font-weight:800;letter-spacing:-.03em;}
+  .model .cd{font-size:12px;line-height:1.45;}
+  .model .cell.gate-cell{
+    background:repeating-linear-gradient(135deg,rgba(164,50,40,.05) 0 8px,transparent 8px 16px),#f3dfd8;
+  }
+  .model .cell.gate-cell .ct,.model .cell.gate-cell .ch,.model .cell.gate-cell .cn{color:var(--red-dark);}
+  .model .cell.gate-cell .cd{color:#542823;}
+
+  .workbench{display:grid;grid-template-columns:var(--rail) minmax(0,1fr);gap:34px;margin-top:34px;align-items:start;}
+  .manual-index{position:sticky;top:18px;border-top:5px solid var(--ink);background:rgba(241,238,229,.96);padding-top:15px;}
+  .index-label{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:0 0 12px;}
+  .index-list{border-top:1px solid var(--line);}
+  .index-link{
+    width:100%;display:grid;grid-template-columns:34px 1fr;gap:9px;align-items:center;
+    background:transparent;color:var(--ink);border:0;border-bottom:1px solid var(--line);
+    padding:10px 5px;text-align:left;cursor:pointer;
+  }
+  .index-link:hover,.index-link.is-current{background:var(--ink);color:var(--white);}
+  .index-link .ix{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--kraft-deep);}
+  .index-link:hover .ix,.index-link.is-current .ix{color:var(--amber);}
+  .index-link .it{font-size:11px;font-weight:700;line-height:1.25;}
+  .index-note{margin-top:18px;padding:15px;border:1px solid var(--line);font-size:11px;color:var(--muted);line-height:1.5;}
+  .index-note b{display:block;color:var(--ink);text-transform:uppercase;font-size:10px;margin-bottom:5px;}
+  .manual-content{min-width:0;}
+
+  .toolbar{display:grid;grid-template-columns:minmax(260px,1fr) auto auto auto;gap:8px;align-items:stretch;margin:0 0 12px;}
+  .search{border:1px solid var(--ink);background:var(--white);padding:9px 12px;min-width:0;}
+  .search input{font-family:'Archivo',sans-serif;font-size:13px;min-width:60px;}
+  button.tb{font-size:9px;border-width:1px;padding:9px 12px;font-weight:600;}
+  .legend{gap:7px;margin-bottom:18px;padding:0 2px;font-size:9px;}
+  .legend > span:first-child{margin-right:5px;padding-top:3px;}
+  .legend .fk{background:transparent;border-width:1px;padding:2px 6px;}
+
+  .q{border-width:1px;margin-bottom:13px;background:rgba(251,250,246,.82);box-shadow:none;scroll-margin-top:70px;}
+  .qhead{display:grid;grid-template-columns:64px minmax(0,1fr) 24px;align-items:stretch;gap:0;padding:0;min-height:104px;}
+  .qhead:hover{background:var(--white);}
+  .qnum{
+    font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:22px;line-height:1;
+    color:var(--paper);background:var(--ink);display:flex;align-items:flex-start;justify-content:center;
+    width:auto;text-align:center;border-right:1px solid var(--ink);padding:20px 0 0;
+  }
+  .q.open .qnum{color:var(--amber);}
+  .qtext{min-width:0;padding:17px 20px 16px;}
+  .qtitle{font-family:'Archivo',sans-serif;font-size:21px;font-weight:800;letter-spacing:-.035em;line-height:1.05;}
+  .qwhy{font-size:12px;max-width:80ch;}
+  .qjob{font-size:8px;letter-spacing:.12em;color:var(--ink);padding:2px 0;margin-top:8px;background:transparent;border-bottom:2px solid currentColor;}
+  .job-qualify{color:var(--green);}.job-matrix{color:var(--kraft-deep);}.job-next{color:var(--ink-2);}
+  .chev{align-self:center;margin-right:13px;}
+  .qbody{border-top:1px solid var(--ink);padding:0 22px 22px 85px;background:var(--white);}
+  .fills{background:transparent;border:0;border-bottom:1px solid var(--line);padding:12px 0;margin:0 0 16px;}
+  .fills .flabel{font-size:9px;}
+  .fk{font-size:9px;border:0;padding:2px 7px;}
+
+  .branch{margin-left:0;border-left:1px solid var(--line-2);}
+  .node > .nrow{padding:8px 10px 8px 24px;border-bottom:1px solid rgba(200,192,174,.48);}
+  .node > .nrow::before{top:19px;width:15px;border-top-width:1px;border-color:var(--line-2);}
+  .node.has-children > .nrow:hover{background:var(--paper);}
+  .ntoggle{font-size:8px;border:0;border-bottom:1px solid var(--kraft);background:transparent;padding:0 1px;text-transform:uppercase;letter-spacing:.06em;}
+  .nhint{margin-top:3px;}
+  .nfk{font-size:8px;border-style:solid;padding:1px 5px;}
+  .script{padding:13px 15px;margin:8px 0 8px 24px;border-left-width:5px;}
+  .script b{font-size:8px;letter-spacing:.14em;margin-bottom:5px;}
+
+  .type-rule > .nrow{background:#f5ead1;border-left-width:5px;padding:9px 12px 9px 14px;}
+  .type-gate > .nrow{
+    background:repeating-linear-gradient(135deg,#f4dfd9 0 10px,#f8e8e3 10px 20px);
+    border:1px solid var(--red);border-left:7px solid var(--red);padding:12px 14px;
+  }
+  .type-gate > .nrow .nq{color:var(--red-dark);font-weight:800;text-transform:uppercase;letter-spacing:-.01em;}
+  .type-required > .nrow{padding:7px 10px 7px 14px;background:#fbf1ee;}
+  .type-required > .nrow .nq{font-size:11px;}
+  .type-loop > .nrow{border-left:5px double var(--ink-2);padding:8px 12px 8px 14px;}
+  .type-section > .nrow{padding-top:16px;padding-bottom:8px;border-bottom:2px solid var(--ink);}
+  .type-section > .nrow .nq{font-family:'Archivo',sans-serif;font-size:13px;font-weight:800;letter-spacing:.08em;}
+  .xref{font-size:8px;padding:2px 7px;}
+
+  .breadcrumb{
+    top:0;background:rgba(23,25,20,.96);border:1px solid var(--ink);padding:10px 13px;margin-bottom:12px;
+    font-size:9px;color:#bdb9ad;box-shadow:var(--shadow);
+  }
+  .breadcrumb-segment{color:var(--amber);}
+  .breadcrumb-sep{color:#77776f;}
+  .breadcrumb-current{color:var(--white);}
+  .breadcrumb-empty{color:#aaa79d;}
+  .search-counter{font-size:9px;}
+  footer{border-top:5px solid var(--ink);font-size:9px;text-transform:uppercase;letter-spacing:.05em;}
+
+  @media (max-width:980px){
+    .workbench{grid-template-columns:1fr;}
+    .manual-index{position:relative;top:auto;}
+    .index-list{display:grid;grid-template-columns:repeat(5,1fr);}
+    .index-link{grid-template-columns:1fr;gap:2px;border-right:1px solid var(--line);padding:8px;}
+    .index-note{display:none;}
+  }
+  @media (max-width:760px){
+    .wrap{padding:12px 12px 60px;}
+    header.masthead{grid-template-columns:1fr;min-height:auto;padding:24px 22px;gap:26px;}
+    .cover-meta{display:grid;grid-template-columns:1fr 1fr;gap:20px;border-left:0;border-top:1px solid rgba(255,255,255,.22);padding:16px 0 0;}
+    .cover-meta .status{border-top:0;padding-top:0;}
+    .kicker{margin-bottom:28px;}
+    h1{font-size:clamp(36px,11vw,58px);}
+    .model .cell{min-height:auto;padding:16px 18px;}
+    .model .ct{margin-bottom:8px;}
+    .workbench{margin-top:22px;}
+    .index-list{grid-template-columns:repeat(2,1fr);}
+    .toolbar{grid-template-columns:1fr 1fr 1fr;}
+    .search{grid-column:1/-1;}
+    button.tb{padding:9px 5px;}
+    .qhead{grid-template-columns:48px minmax(0,1fr) 20px;min-height:94px;}
+    .qnum{font-size:17px;padding-top:18px;}
+    .qtext{padding:15px 13px;}
+    .qtitle{font-size:20px;}
+    .qwhy{font-size:11px;}
+    .qbody{padding:0 12px 18px 24px;}
+    .legend{display:none;}
+    .children{margin-left:10px;}
+  }
+  @media print{
+    .manual-index{display:none!important;}
+    .workbench{display:block;}
+  }
+
 </style>
 </head>
 <body>
+<a class="skip-link" href="#tree">Skip to question manual</a>
 <div class="wrap">
 
   <header class="masthead">
-    <p class="kicker">Vision Packaging // Beyond the Ten Questions</p>
-    <h1>Discovery Architect<br><span class="thin">Branch Logic, Loops &amp; Gates</span></h1>
-    <p class="sub">The Ten Questions are the doorway. <b>This is what happens after.</b> Every branch below is built so a rep can drive a real conversation, not run a checklist. Every gate stops the Order Form until the right paperwork is in place.</p>
-    <p class="mantra">Deep, meaningful insights <span>·</span> Meaningful business conversations</p>
+    <div class="cover-main">
+      <p class="kicker">Vision Packaging // Beyond the Ten Questions</p>
+      <h1>Discovery Architect<br><span class="thin">Branch Logic, Loops &amp; Gates</span></h1>
+      <p class="sub">The Ten Questions are the doorway. <b>This is what happens after.</b> Every branch below is built so a rep can drive a real conversation, not run a checklist. Every gate stops the Order Form until the right paperwork is in place.</p>
+      <p class="mantra">Deep, meaningful insights <span>·</span> Meaningful business conversations</p>
+    </div>
+    <div class="cover-meta" aria-label="Manual issue information">
+      <p class="issue">Manual series<strong>DA-10</strong></p>
+      <p class="status"><b>Training status</b>Internal field reference<br>Not for live customer use</p>
+    </div>
   </header>
 
   <div class="model">
-    <div class="cell job-cell" data-job="qualify">
+    <div class="cell job-cell" data-job="qualify" role="button" tabindex="0" aria-pressed="false">
       <p class="ct">Job 1 // Qualify</p>
       <p class="ch">Is this real?</p>
       <p class="cd">Size the account and the world around it before spending an hour quoting.</p>
       <p class="cn">Q1 · Q5 · Q10</p>
     </div>
-    <div class="cell job-cell" data-job="matrix">
+    <div class="cell job-cell" data-job="matrix" role="button" tabindex="0" aria-pressed="false">
       <p class="ct">Job 2 // The Buy Matrix</p>
       <p class="ch">One looped grid</p>
       <p class="cd">For every item: volume, frequency, price, source. For every vendor: loop back.</p>
       <p class="cn">Q2 ↔ Q7 ↔ Q3 ↔ Q4 ↔ Q8</p>
     </div>
-    <div class="cell job-cell" data-job="next">
+    <div class="cell job-cell" data-job="next" role="button" tabindex="0" aria-pressed="false">
       <p class="ct">Job 3 // Next Move</p>
       <p class="ch">Dock and timing</p>
       <p class="cd">How it leaves their building, and the window to displace the incumbent.</p>
@@ -369,17 +569,36 @@
     </div>
   </div>
 
+  <div class="workbench">
+    <aside class="manual-index" aria-label="Question index">
+      <p class="index-label">Manual index / 10 openers</p>
+      <nav class="index-list">
+        <button class="index-link" data-question="q-1"><span class="ix">01</span><span class="it">What do you do?</span></button>
+        <button class="index-link" data-question="q-2"><span class="ix">02</span><span class="it">What do you buy?</span></button>
+        <button class="index-link" data-question="q-3"><span class="ix">03</span><span class="it">How often?</span></button>
+        <button class="index-link" data-question="q-4"><span class="ix">04</span><span class="it">What do you pay?</span></button>
+        <button class="index-link" data-question="q-5"><span class="ix">05</span><span class="it">Will you buy?</span></button>
+        <button class="index-link" data-question="q-6"><span class="ix">06</span><span class="it">How do you ship?</span></button>
+        <button class="index-link" data-question="q-7"><span class="ix">07</span><span class="it">How much?</span></button>
+        <button class="index-link" data-question="q-8"><span class="ix">08</span><span class="it">Who supplies it?</span></button>
+        <button class="index-link" data-question="q-9"><span class="ix">09</span><span class="it">When again?</span></button>
+        <button class="index-link" data-question="q-10"><span class="ix">10</span><span class="it">Who else?</span></button>
+      </nav>
+      <div class="index-note"><b>Operating rule</b>Follow the branch until you can fill the field, expose the loop, or hit a gate. Do not skip the gate.</div>
+    </aside>
+
+    <main class="manual-content" id="manual">
   <div class="toolbar">
-    <label class="search">
+    <div class="search">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7a7163" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
-      <input id="search" type="text" placeholder="Search questions and branches (e.g. stretch, vendor, pallet, gauge)...">
+      <input id="search" type="text" aria-label="Search questions and branches" placeholder="Search questions and branches (e.g. stretch, vendor, pallet, gauge)...">
       <span class="search-counter" id="searchCounter"></span>
-      <button class="search-nav" id="searchPrev" title="Previous match" disabled>↑</button>
-      <button class="search-nav" id="searchNext" title="Next match" disabled>↓</button>
-    </label>
-    <button class="tb" id="essentialsToggle" title="Show only essential branches for training">Essentials only</button>
-    <button class="tb solid" id="expandAll">Expand all</button>
-    <button class="tb" id="collapseAll">Collapse all</button>
+      <button type="button" class="search-nav" id="searchPrev" title="Previous match" aria-label="Previous search match" disabled>↑</button>
+      <button type="button" class="search-nav" id="searchNext" title="Next match" aria-label="Next search match" disabled>↓</button>
+    </div>
+    <button type="button" class="tb" id="essentialsToggle" aria-pressed="false" title="Show only essential branches for training">Essentials only</button>
+    <button type="button" class="tb solid" id="expandAll">Expand all</button>
+    <button type="button" class="tb" id="collapseAll">Collapse all</button>
   </div>
 
   <div class="breadcrumb" id="breadcrumb">
@@ -395,9 +614,11 @@
 
   <footer>
     <span>Vision Packaging · Discovery Architect</span>
-    <span>v0.4 · build 2026-06-05 · training mode</span>
+    <span>v0.4 · redesign preview · build 2026-06-12</span>
     <span id="meta"></span>
   </footer>
+    </main>
+  </div>
 </div>
 
 <script>
@@ -939,7 +1160,7 @@ function renderNode(node){
   const el = document.createElement('div');
   el.className = 'node' + (hasKids ? ' has-children' : '') + (node.type ? ' type-' + node.type : '');
   if(node.id) el.id = node.id;
-  let html = `<div class="nrow"><span class="nq">${node.q}</span>${node.fk?fkTags(node.fk):''}${xrefChips(node.xref)}${hasKids?'<span class="ntoggle"></span>':''}`;
+  let html = `<div class="nrow"${hasKids?' role="button" tabindex="0" aria-expanded="false"':''}><span class="nq">${node.q}</span>${node.fk?fkTags(node.fk):''}${xrefChips(node.xref)}${hasKids?'<span class="ntoggle"></span>':''}`;
   if(node.hint) html += `<span class="nhint">${node.hint}</span>`;
   html += `</div>`;
   if(node.script){
@@ -951,9 +1172,21 @@ function renderNode(node){
     kids.className = 'children';
     node.children.forEach(c=>kids.appendChild(renderNode(c)));
     el.appendChild(kids);
-    el.querySelector('.nrow').addEventListener('click',(e)=>{
+    const row = el.querySelector('.nrow');
+    const toggleNode = ()=>{
+      const open = el.classList.toggle('open');
+      row.setAttribute('aria-expanded', String(open));
+    };
+    row.addEventListener('click',(e)=>{
       e.stopPropagation();
-      el.classList.toggle('open');
+      toggleNode();
+    });
+    row.addEventListener('keydown',(e)=>{
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        e.stopPropagation();
+        toggleNode();
+      }
     });
   }
   return el;
@@ -968,7 +1201,7 @@ DATA.forEach(qd=>{
 
   const fills = qd.fills.map(f=>`<span class="fk">${f}</span>`).join('');
   q.innerHTML = `
-    <div class="qhead">
+    <div class="qhead" role="button" tabindex="0" aria-expanded="false">
       <div class="qnum">${qd.n}</div>
       <div class="qtext">
         <p class="qtitle">${qd.title}</p>
@@ -985,12 +1218,54 @@ DATA.forEach(qd=>{
   const branchHost = q.querySelector('.branch');
   qd.branches.forEach(b=>branchHost.appendChild(renderNode(b)));
 
-  q.querySelector('.qhead').addEventListener('click',()=>q.classList.toggle('open'));
+  const qhead = q.querySelector('.qhead');
+  const toggleQuestion = ()=>{
+    const open = q.classList.toggle('open');
+    qhead.setAttribute('aria-expanded', String(open));
+  };
+  qhead.addEventListener('click',toggleQuestion);
+  qhead.addEventListener('keydown',(e)=>{
+    if(e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      toggleQuestion();
+    }
+  });
   tree.appendChild(q);
 });
 
 /* ---- controls ---- */
 const qs = [...document.querySelectorAll('.q')];
+const indexLinks = [...document.querySelectorAll('.index-link')];
+
+/* ---- manual index ---- */
+function setActiveIndex(questionId){
+  indexLinks.forEach(link=>link.classList.toggle('is-current',link.dataset.question===questionId));
+}
+
+indexLinks.forEach(link=>{
+  link.addEventListener('click',()=>{
+    const target = document.getElementById(link.dataset.question);
+    if(!target) return;
+    setActiveIndex(target.id);
+    target.classList.add('open');
+    target.querySelector('.qhead').setAttribute('aria-expanded','true');
+    target.scrollIntoView({behavior:'smooth',block:'start'});
+    updateBreadcrumb(target);
+    setTimeout(()=>setActiveIndex(target.id),450);
+  });
+});
+
+if('IntersectionObserver' in window){
+  const indexObserver = new IntersectionObserver(entries=>{
+    const visible = entries
+      .filter(entry=>entry.isIntersecting)
+      .sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top)[0];
+    if(!visible) return;
+    setActiveIndex(visible.target.id);
+  },{rootMargin:'-10% 0px -72% 0px',threshold:[0,.2]});
+  qs.forEach(q=>indexObserver.observe(q));
+}
+
 /* ---- cross-reference jumps ---- */
 document.addEventListener('click', (e) => {
   const chip = e.target.closest('.xref');
@@ -1003,6 +1278,8 @@ document.addEventListener('click', (e) => {
   while(cur){
     if(cur.classList && (cur.classList.contains('node') || cur.classList.contains('q'))){
       cur.classList.add('open');
+      const control = cur.querySelector(':scope > .nrow, :scope > .qhead');
+      if(control) control.setAttribute('aria-expanded','true');
     }
     cur = cur.parentElement;
   }
@@ -1016,12 +1293,24 @@ document.addEventListener('click', (e) => {
 
 /* ---- expand / collapse ---- */
 document.getElementById('expandAll').addEventListener('click',()=>{
-  qs.forEach(q=>q.classList.add('open'));
-  document.querySelectorAll('.node.has-children').forEach(n=>n.classList.add('open'));
+  qs.forEach(q=>{
+    q.classList.add('open');
+    q.querySelector('.qhead').setAttribute('aria-expanded','true');
+  });
+  document.querySelectorAll('.node.has-children').forEach(n=>{
+    n.classList.add('open');
+    n.querySelector(':scope > .nrow').setAttribute('aria-expanded','true');
+  });
 });
 document.getElementById('collapseAll').addEventListener('click',()=>{
-  qs.forEach(q=>q.classList.remove('open'));
-  document.querySelectorAll('.node.has-children').forEach(n=>n.classList.remove('open'));
+  qs.forEach(q=>{
+    q.classList.remove('open');
+    q.querySelector('.qhead').setAttribute('aria-expanded','false');
+  });
+  document.querySelectorAll('.node.has-children').forEach(n=>{
+    n.classList.remove('open');
+    n.querySelector(':scope > .nrow').setAttribute('aria-expanded','false');
+  });
   updateBreadcrumb(null);
 });
 
@@ -1029,17 +1318,31 @@ document.getElementById('collapseAll').addEventListener('click',()=>{
 const jobCells = document.querySelectorAll('.cell.job-cell');
 let activeJob = null;
 jobCells.forEach(cell=>{
-  cell.addEventListener('click', ()=>{
+  const toggleJob = ()=>{
     const job = cell.dataset.job;
     if(activeJob === job){
       // deactivate (show all)
-      jobCells.forEach(c=>c.classList.remove('is-active'));
+      jobCells.forEach(c=>{
+        c.classList.remove('is-active');
+        c.setAttribute('aria-pressed','false');
+      });
       qs.forEach(q=>q.classList.remove('hidden-by-job'));
       activeJob = null;
     } else {
-      jobCells.forEach(c=>c.classList.toggle('is-active', c===cell));
+      jobCells.forEach(c=>{
+        const active = c===cell;
+        c.classList.toggle('is-active',active);
+        c.setAttribute('aria-pressed',String(active));
+      });
       qs.forEach(q=>q.classList.toggle('hidden-by-job', q.dataset.job !== job));
       activeJob = job;
+    }
+  };
+  cell.addEventListener('click',toggleJob);
+  cell.addEventListener('keydown',(e)=>{
+    if(e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      toggleJob();
     }
   });
 });
@@ -1081,11 +1384,20 @@ essentialsBtn.addEventListener('click', ()=>{
   const tree = document.getElementById('tree');
   const on = tree.classList.toggle('essentials-on');
   essentialsBtn.classList.toggle('is-active', on);
+  essentialsBtn.setAttribute('aria-pressed',String(on));
   essentialsBtn.textContent = on ? 'Show everything' : 'Essentials only';
   if(on){
     // auto-expand so the essentials trail is visible
-    qs.forEach(q=>{ if(!q.classList.contains('hidden-by-job')) q.classList.add('open'); });
-    document.querySelectorAll('.node.has-children.essential').forEach(n=>n.classList.add('open'));
+    qs.forEach(q=>{
+      if(!q.classList.contains('hidden-by-job')){
+        q.classList.add('open');
+        q.querySelector('.qhead').setAttribute('aria-expanded','true');
+      }
+    });
+    document.querySelectorAll('.node.has-children.essential').forEach(n=>{
+      n.classList.add('open');
+      n.querySelector(':scope > .nrow').setAttribute('aria-expanded','true');
+    });
   }
 });
 
@@ -1170,8 +1482,15 @@ search.addEventListener('input',()=>{
   const t = search.value.trim().toLowerCase();
   clearSearchState();
   if(!t){
-    qs.forEach(q=>{ q.classList.remove('hidden'); q.classList.remove('open'); });
-    document.querySelectorAll('.node.has-children').forEach(n=>n.classList.remove('open'));
+    qs.forEach(q=>{
+      q.classList.remove('hidden');
+      q.classList.remove('open');
+      q.querySelector('.qhead').setAttribute('aria-expanded','false');
+    });
+    document.querySelectorAll('.node.has-children').forEach(n=>{
+      n.classList.remove('open');
+      n.querySelector(':scope > .nrow').setAttribute('aria-expanded','false');
+    });
     return;
   }
   qs.forEach(q=>{
@@ -1181,6 +1500,7 @@ search.addEventListener('input',()=>{
     }
     q.classList.remove('hidden');
     q.classList.add('open');
+    q.querySelector('.qhead').setAttribute('aria-expanded','true');
     // find which specific nodes match
     const nodes = q.querySelectorAll('.node');
     nodes.forEach(n=>{
@@ -1193,6 +1513,7 @@ search.addEventListener('input',()=>{
         while(cur && cur !== q){
           if(cur.classList && cur.classList.contains('node') && cur.classList.contains('has-children')){
             cur.classList.add('open');
+            cur.querySelector(':scope > .nrow').setAttribute('aria-expanded','true');
           }
           cur = cur.parentElement;
         }

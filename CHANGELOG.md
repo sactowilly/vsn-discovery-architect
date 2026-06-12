@@ -9,6 +9,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 Priority order for the next iteration. Pick from the top.
 
+### Changed
+- Reframed the interface as a packaging field manual with an indexed workbench, operational cover, ledger-style question plates, and a clearer notation system for gates, loops, scripts, and RFQ fields
+- Added keyboard operation and synchronized expanded states for question and branch controls
+- Added responsive question-index navigation with active-section tracking
+
 ### Planned
 - **Deepen Q6 (shipping).** Currently 20 branches, shallow compared to corrugated (226), tape, and foam. Bring to parity. Cover dunnage and load securement in transit, parcel-vs-LTL-vs-truckload cost dynamics, cube-utilization and DIM-weight optimization, accessorials, and damage-claim history as a discovery wedge.
 - **Deepen the strapping branch in Q2.** Currently minimal. Cover poly vs PET vs steel, break strength matching, hand vs battery vs pneumatic tools, seal types, and unitization patterns. Apply the same stock-vs-custom qualifier as the other Q2 categories.
