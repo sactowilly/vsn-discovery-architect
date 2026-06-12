@@ -5,6 +5,24 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ---
 
+## [v0.5] — 2026-06-05
+
+### Added
+- Q2 audit and extension framework in `docs/q2-audit-extension-framework.md`
+- Explicit `e:1` node marker for hand-curated Essentials mode
+- Q2 Essentials spine curated with explicit markers across the main product categories, stock/custom decision points, custom gates, and required blocker nodes
+- README audit-standard section linking future branch work back to the Q2 framework
+
+### Changed
+- Essentials mode now uses explicit `e:1` markers for any question that has them, while preserving the legacy structural fallback for unaudited questions
+- Version stamp updated to v0.5
+
+### Notes
+- Q2 remains the gold-standard branch for future audit passes.
+- No broad product expansion was added in this version; the goal was reliability and repeatable extension discipline.
+
+---
+
 ## [v0.4] — 2026-06-05
 
 ### Added

@@ -2,7 +2,7 @@
 
 > Beyond the Ten Questions. A deep-discovery branch-logic tool for sales training.
 
-**Status:** v0.4 preview · training-only · not for live customer use
+**Status:** v0.5 preview · training-only · not for live customer use
 
 ---
 
@@ -32,7 +32,7 @@ Open `index.html` in any modern browser. Single file, no build, no dependencies.
 |---|---|
 | Click any of the four masthead cells | Filter the tree to a single job (or read the universal Custom Gate rule on the right) |
 | Click any question card | Expand its branches |
-| Click "Essentials only" in the toolbar | Show only the training subset (structural nodes plus any branch that fills an RFQ field) |
+| Click "Essentials only" in the toolbar | Show the curated training spine where `e:1` markers exist; unaudited questions fall back to structural and RFQ-field branches |
 | Use the search box | Find any branch by keyword |
 | Arrows next to the search box, or Enter / Shift+Enter | Cycle through search matches |
 | Watch the sticky breadcrumb | It tracks where you are; click any segment to jump back to that level |
@@ -55,6 +55,7 @@ The whole tool is a single HTML file. Inside the `<script>` block at the bottom,
   q:        "the question text",
   hint:     "rep-side coaching note",            // optional
   fk:       ["DESCRIPTION","QTY","PRICE"],       // RFQ fields this fills, optional
+  e:        1,                                    // optional, hand-curated Essentials marker
   type:     "section|gate|rule|required|loop",   // visual variant, optional
   id:       "target-stretch",                    // jump target id, optional
   xref:     [{label:"Q2 Stretch", target:"target-stretch"}],  // jump chips, optional
@@ -64,13 +65,19 @@ The whole tool is a single HTML file. Inside the `<script>` block at the bottom,
 
 The full schema is documented in a comment block directly above the DATA array in `index.html`. That comment is the canonical reference for adding new branches.
 
+## Audit standards
+
+Q2 is now the gold-standard audit branch. Before adding deeper product questions, use [`docs/q2-audit-extension-framework.md`](docs/q2-audit-extension-framework.md).
+
+The short rule: do not add a branch unless it changes the quote, the risk, the next step, or the rep's understanding of the account.
+
 ## Roadmap
 
 | Version | Goal |
 |---|---|
-| **v0.5** | Hand-tuned essentials curation (replace algorithmic essential-flag with explicit `e:1` markers per branch) |
+| **v0.5** | Q2 audit standard, extension-question rubric, and explicit `e:1` Essentials markers for the Q2 spine |
 | **v0.6** | Deepen Q6 (shipping) and the strapping branch to parity with corrugated, tape, and foam |
-| **v0.7** | Audit pass by ChatGPT (Cliff), revisions applied |
+| **v0.7** | Continue audit passes question-by-question, using Q2 as the pattern |
 | **v0.8** | Separate companion project: live SKU-capture matrix bridging this tool to the RFQ form |
 | **v1.0** | Approved for full sales-team rollout |
 
@@ -83,7 +90,7 @@ The full schema is documented in a comment block directly above the DATA array i
 ├── CHANGELOG.md       Version history
 ├── LICENSE            Proprietary, internal use
 ├── .gitignore         
-└── docs/              (planned) audit notes from Cliff and screenshots
+└── docs/              Audit notes, extension rubrics, and screenshots
 ```
 
 ## License
