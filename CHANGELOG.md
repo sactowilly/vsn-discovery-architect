@@ -10,6 +10,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 Priority order for the next iteration. Pick from the top.
 
 ### Changed
+- Replaced the field-manual accordion document with the selected Conversation Map direction: one active decision, visible route progress, next-move choices, live RFQ field capture, coaching cues, and blocking gate status
+- Rebuilt search as direct navigation into any matching branch while preserving the existing `DATA` schema and dependency-free single-file architecture
 - Reframed the interface as a packaging field manual with an indexed workbench, operational cover, ledger-style question plates, and a clearer notation system for gates, loops, scripts, and RFQ fields
 - Added keyboard operation and synchronized expanded states for question and branch controls
 - Added responsive question-index navigation with active-section tracking

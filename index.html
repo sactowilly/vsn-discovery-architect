@@ -523,102 +523,205 @@
     .workbench{display:block;}
   }
 
+  /* ---------- v0.5 Conversation Map ---------- */
+  body.map-mode{background:#0d2036;color:var(--white);min-height:100vh;}
+  body.map-mode .wrap{max-width:none;padding:0;}
+  .map-header{
+    height:68px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;
+    border-bottom:1px solid rgba(255,255,255,.16);background:#0d2036;position:sticky;top:0;z-index:20;
+  }
+  .map-brand{display:flex;align-items:center;gap:18px;min-width:0;}
+  .map-brand strong{font-size:15px;letter-spacing:-.02em;text-transform:uppercase;}
+  .map-brand span{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--amber);text-transform:uppercase;}
+  .map-header-actions{display:flex;align-items:center;gap:10px;}
+  .map-search-wrap{position:relative;}
+  .map-search{
+    width:min(340px,32vw);height:38px;border:1px solid rgba(255,255,255,.24);border-radius:20px;
+    background:rgba(255,255,255,.07);color:var(--white);padding:0 38px 0 15px;font-size:12px;
+  }
+  .map-search::placeholder{color:#aab5c2;}
+  .map-search-count{position:absolute;right:14px;top:11px;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--amber);}
+  .map-reset{
+    height:38px;border:1px solid rgba(255,255,255,.24);border-radius:20px;padding:0 16px;
+    background:transparent;color:var(--white);font-family:'IBM Plex Mono',monospace;font-size:9px;
+    letter-spacing:.08em;text-transform:uppercase;cursor:pointer;
+  }
+  .map-reset:hover{background:var(--signal);border-color:var(--signal);}
+  .map-question-strip{
+    display:flex;align-items:stretch;gap:0;overflow-x:auto;background:#f3efe4;color:var(--ink);
+    border-bottom:1px solid rgba(0,0,0,.25);scrollbar-width:thin;
+  }
+  .map-question{
+    flex:1 0 112px;min-height:64px;border:0;border-right:1px solid var(--line);background:transparent;
+    color:var(--ink);padding:10px 12px;text-align:left;cursor:pointer;
+  }
+  .map-question:hover{background:var(--white);}
+  .map-question.is-active{background:var(--signal);color:var(--white);}
+  .map-question .mq-num{display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;margin-bottom:4px;color:var(--kraft-deep);}
+  .map-question.is-active .mq-num{color:#ffe3c5;}
+  .map-question .mq-title{display:block;font-size:11px;font-weight:700;line-height:1.15;}
+  .map-layout{
+    min-height:calc(100vh - 133px);display:grid;grid-template-columns:300px minmax(430px,1fr) 292px;
+    gap:0;background:#0d2036;
+  }
+  .path-panel,.outcome-panel{padding:26px 24px;background:#0d2036;}
+  .path-panel{border-right:1px solid rgba(255,255,255,.16);}
+  .outcome-panel{border-left:1px solid rgba(255,255,255,.16);}
+  .panel-label{
+    margin:0 0 18px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.14em;
+    text-transform:uppercase;color:#b9c2cd;
+  }
+  .path-question{margin:0 0 22px;font-size:17px;line-height:1.2;color:var(--white);}
+  .path-list{list-style:none;margin:0;padding:0;}
+  .path-step{position:relative;display:grid;grid-template-columns:24px 46px 1fr;gap:8px;align-items:start;padding:0 0 22px;}
+  .path-step:not(:last-child)::after{content:"";position:absolute;left:9px;top:20px;bottom:2px;border-left:1px solid #536273;}
+  .path-dot{width:19px;height:19px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#204f82;color:#fff;font-size:10px;font-weight:800;}
+  .path-step.is-done .path-dot{background:var(--green);}
+  .path-step.is-current .path-dot{background:var(--signal);}
+  .path-code{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--amber);padding-top:2px;}
+  .path-copy{font-size:11px;font-weight:600;line-height:1.35;color:#eef1f4;}
+  .path-step.is-upcoming .path-copy{color:#94a2b1;}
+  .path-back{
+    width:100%;margin-top:8px;padding:11px;border:1px solid rgba(255,255,255,.25);border-radius:5px;
+    background:transparent;color:#fff;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.08em;
+    text-transform:uppercase;cursor:pointer;
+  }
+  .path-back:disabled{opacity:.3;cursor:not-allowed;}
+  .decision-stage{padding:36px;min-width:0;background:#0d2036;}
+  .decision-context{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:18px;}
+  .decision-context p{margin:0;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--amber);text-transform:uppercase;}
+  .decision-progress{font-size:11px;color:#b9c2cd;}
+  .decision-card{max-width:640px;margin:0 auto;background:var(--white);color:var(--ink);border-radius:12px;padding:30px;box-shadow:0 24px 70px rgba(0,0,0,.22);}
+  .decision-kicker{margin:0 0 18px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.13em;color:var(--signal);text-transform:uppercase;}
+  .decision-title{margin:0;font-size:clamp(27px,3.4vw,43px);line-height:1.03;letter-spacing:-.045em;text-transform:none;}
+  .decision-hint{margin:15px 0 0;font-size:14px;line-height:1.55;color:var(--ink-2);}
+  .decision-options{display:grid;gap:10px;margin-top:26px;}
+  .decision-option{
+    display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;width:100%;min-height:54px;
+    border:0;border-radius:5px;background:#e5deca;color:var(--ink);padding:14px 17px;text-align:left;cursor:pointer;
+  }
+  .decision-option:hover,.decision-option:focus-visible{background:var(--signal);color:#fff;}
+  .decision-option:first-child{background:var(--signal);color:#fff;}
+  .decision-option .do-copy{font-size:12px;font-weight:700;line-height:1.3;}
+  .decision-option .do-meta{display:block;margin-top:5px;font-size:10px;font-weight:400;opacity:.72;}
+  .decision-option .do-arrow{font-size:21px;font-weight:700;}
+  .decision-option.xref-option{background:#d8e4ef;color:#17324d;border:1px solid #b5c9da;}
+  .decision-option.xref-option:hover,.decision-option.xref-option:focus-visible{background:#bfd3e4;color:#102a43;}
+  .xref-label{margin:18px 0 -2px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);}
+  .decision-leaf{margin-top:26px;padding:18px;background:#edf2ec;border-left:5px solid var(--green);font-size:13px;color:var(--ink-2);}
+  .decision-leaf strong{display:block;color:var(--green);font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;}
+  .coach-cue{max-width:640px;margin:20px auto 0;padding:16px 18px;border-radius:6px;background:#203b56;color:#fff;}
+  .coach-cue b{display:block;margin-bottom:5px;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--amber);text-transform:uppercase;}
+  .coach-cue span{font-size:13px;line-height:1.45;}
+  .script-cue{background:var(--ink);border-left:5px solid var(--amber);}
+  .outcome-score{font-size:42px;font-weight:800;line-height:1;color:#fff;letter-spacing:-.04em;}
+  .outcome-copy{font-size:11px;color:#c5ced8;margin-top:5px;}
+  .outcome-rule{border:0;border-top:1px solid #4c5c6d;margin:22px 0;}
+  .outcome-fields{display:flex;flex-wrap:wrap;gap:7px;}
+  .outcome-field{padding:4px 7px;border:1px solid #637183;color:var(--amber);font-family:'IBM Plex Mono',monospace;font-size:8px;}
+  .outcome-empty{font-size:11px;color:#93a1b1;line-height:1.45;}
+  .gate-status{margin-top:24px;}
+  .gate-card{padding:15px;background:var(--red);border-radius:6px;color:#fff;}
+  .gate-card strong{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px;}
+  .gate-card span{font-size:11px;line-height:1.4;}
+  .gate-list{margin:10px 0 0;padding:0;list-style:none;}
+  .gate-list li{padding:7px 0;border-top:1px solid rgba(255,255,255,.3);font-size:10px;}
+  .search-results{
+    position:fixed;z-index:40;top:58px;right:116px;width:min(520px,calc(100vw - 32px));max-height:70vh;overflow:auto;
+    background:#fff;color:var(--ink);border:1px solid var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.3);display:none;
+  }
+  .search-results.is-open{display:block;}
+  .search-result{display:block;width:100%;padding:13px 15px;border:0;border-bottom:1px solid var(--line);background:#fff;text-align:left;cursor:pointer;}
+  .search-result:hover{background:var(--paper);}
+  .search-result b{display:block;font-size:12px;margin-bottom:3px;}
+  .search-result span{font-size:10px;color:var(--muted);}
+  .map-footer{display:none;}
+  @media(max-width:980px){
+    .map-layout{grid-template-columns:230px minmax(400px,1fr);}
+    .outcome-panel{grid-column:1/-1;border-left:0;border-top:1px solid rgba(255,255,255,.16);display:grid;grid-template-columns:180px 1fr 1fr;gap:24px;}
+  }
+  @media(max-width:720px){
+    .map-header{height:auto;min-height:62px;padding:12px 16px;gap:12px;}
+    .map-brand span{display:none;}
+    .map-search{width:42vw;}
+    .map-reset{display:none;}
+    .search-results{top:62px;right:16px;}
+    .map-question-strip{scroll-snap-type:x mandatory;}
+    .map-question{flex-basis:112px;scroll-snap-align:start;}
+    .map-layout{display:block;min-height:calc(100vh - 126px);}
+    .path-panel{border-right:0;border-bottom:1px solid rgba(255,255,255,.16);padding:16px;}
+    .path-panel .panel-label,.path-question{display:none;}
+    .path-list{display:flex;overflow-x:auto;gap:4px;padding-bottom:3px;}
+    .path-step{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:0 10px 0 0;}
+    .path-step::after,.path-copy{display:none!important;}
+    .path-code{padding:0;}
+    .path-back{width:auto;margin:10px 0 0;padding:8px 12px;}
+    .decision-stage{padding:22px 16px;}
+    .decision-card{padding:24px 20px;}
+    .decision-option{min-height:50px;}
+    .outcome-panel{display:block;border-top:1px solid rgba(255,255,255,.16);padding:22px 16px;}
+    .outcome-panel .panel-label{margin-top:20px;}
+  }
+
 </style>
 </head>
-<body>
-<a class="skip-link" href="#tree">Skip to question manual</a>
+<body class="map-mode">
+<a class="skip-link" href="#decisionCard">Skip to current decision</a>
 <div class="wrap">
-
-  <header class="masthead">
-    <div class="cover-main">
-      <p class="kicker">Vision Packaging // Beyond the Ten Questions</p>
-      <h1>Discovery Architect<br><span class="thin">Branch Logic, Loops &amp; Gates</span></h1>
-      <p class="sub">The Ten Questions are the doorway. <b>This is what happens after.</b> Every branch below is built so a rep can drive a real conversation, not run a checklist. Every gate stops the Order Form until the right paperwork is in place.</p>
-      <p class="mantra">Deep, meaningful insights <span>·</span> Meaningful business conversations</p>
+  <header class="map-header">
+    <div class="map-brand">
+      <strong>Discovery Architect</strong>
+      <span>Deep, meaningful insights / meaningful business conversations</span>
     </div>
-    <div class="cover-meta" aria-label="Manual issue information">
-      <p class="issue">Manual series<strong>DA-10</strong></p>
-      <p class="status"><b>Training status</b>Internal field reference<br>Not for live customer use</p>
+    <div class="map-header-actions">
+      <div class="map-search-wrap">
+        <input class="map-search" id="mapSearch" type="search" aria-label="Search all questions and branches" placeholder="Search branches...">
+        <span class="map-search-count" id="mapSearchCount"></span>
+      </div>
+      <button class="map-reset" id="mapReset" type="button">Reset path</button>
     </div>
   </header>
-
-  <div class="model">
-    <div class="cell job-cell" data-job="qualify" role="button" tabindex="0" aria-pressed="false">
-      <p class="ct">Job 1 // Qualify</p>
-      <p class="ch">Is this real?</p>
-      <p class="cd">Size the account and the world around it before spending an hour quoting.</p>
-      <p class="cn">Q1 · Q5 · Q10</p>
-    </div>
-    <div class="cell job-cell" data-job="matrix" role="button" tabindex="0" aria-pressed="false">
-      <p class="ct">Job 2 // The Buy Matrix</p>
-      <p class="ch">One looped grid</p>
-      <p class="cd">For every item: volume, frequency, price, source. For every vendor: loop back.</p>
-      <p class="cn">Q2 ↔ Q7 ↔ Q3 ↔ Q4 ↔ Q8</p>
-    </div>
-    <div class="cell job-cell" data-job="next" role="button" tabindex="0" aria-pressed="false">
-      <p class="ct">Job 3 // Next Move</p>
-      <p class="ch">Dock and timing</p>
-      <p class="cd">How it leaves their building, and the window to displace the incumbent.</p>
-      <p class="cn">Q6 · Q9</p>
-    </div>
-    <div class="cell gate-cell">
-      <p class="ct">⚠️ The Universal Gate</p>
-      <p class="ch">Custom = blocked</p>
-      <p class="cd">Anything made specifically for them (printed, fabricated, custom-sized, custom-spec) requires Custom Item Checklist plus Signed Agreement before the Order Form.</p>
-      <p class="cn">applies to every category</p>
-    </div>
-  </div>
-
-  <div class="workbench">
-    <aside class="manual-index" aria-label="Question index">
-      <p class="index-label">Manual index / 10 openers</p>
-      <nav class="index-list">
-        <button class="index-link" data-question="q-1"><span class="ix">01</span><span class="it">What do you do?</span></button>
-        <button class="index-link" data-question="q-2"><span class="ix">02</span><span class="it">What do you buy?</span></button>
-        <button class="index-link" data-question="q-3"><span class="ix">03</span><span class="it">How often?</span></button>
-        <button class="index-link" data-question="q-4"><span class="ix">04</span><span class="it">What do you pay?</span></button>
-        <button class="index-link" data-question="q-5"><span class="ix">05</span><span class="it">Will you buy?</span></button>
-        <button class="index-link" data-question="q-6"><span class="ix">06</span><span class="it">How do you ship?</span></button>
-        <button class="index-link" data-question="q-7"><span class="ix">07</span><span class="it">How much?</span></button>
-        <button class="index-link" data-question="q-8"><span class="ix">08</span><span class="it">Who supplies it?</span></button>
-        <button class="index-link" data-question="q-9"><span class="ix">09</span><span class="it">When again?</span></button>
-        <button class="index-link" data-question="q-10"><span class="ix">10</span><span class="it">Who else?</span></button>
-      </nav>
-      <div class="index-note"><b>Operating rule</b>Follow the branch until you can fill the field, expose the loop, or hit a gate. Do not skip the gate.</div>
+  <nav class="map-question-strip" id="questionStrip" aria-label="The Ten Questions"></nav>
+  <main class="map-layout">
+    <aside class="path-panel" aria-label="Conversation path">
+      <p class="panel-label">Conversation path</p>
+      <h2 class="path-question" id="pathQuestion"></h2>
+      <ol class="path-list" id="pathList"></ol>
+      <button class="path-back" id="pathBack" type="button">Back one step</button>
     </aside>
-
-    <main class="manual-content" id="manual">
-  <div class="toolbar">
-    <div class="search">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7a7163" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
-      <input id="search" type="text" aria-label="Search questions and branches" placeholder="Search questions and branches (e.g. stretch, vendor, pallet, gauge)...">
-      <span class="search-counter" id="searchCounter"></span>
-      <button type="button" class="search-nav" id="searchPrev" title="Previous match" aria-label="Previous search match" disabled>↑</button>
-      <button type="button" class="search-nav" id="searchNext" title="Next match" aria-label="Next search match" disabled>↓</button>
-    </div>
-    <button type="button" class="tb" id="essentialsToggle" aria-pressed="false" title="Show only essential branches for training">Essentials only</button>
-    <button type="button" class="tb solid" id="expandAll">Expand all</button>
-    <button type="button" class="tb" id="collapseAll">Collapse all</button>
-  </div>
-
-  <div class="breadcrumb" id="breadcrumb">
-    <span class="breadcrumb-empty">Click any question to start. Your trail will show here.</span>
-  </div>
-
-  <div class="legend">
-    <span>Field tags map each branch to the form it fills:</span>
-    <span class="fk">DESCRIPTION</span><span class="fk">QTY</span><span class="fk">UNIT</span><span class="fk">PRICE</span><span class="fk">COST</span><span class="fk">VENDOR</span><span class="fk">FOB</span><span class="fk">LEAD TIME</span><span class="fk">GTM</span>
-  </div>
-
-  <div id="tree"></div>
-
-  <footer>
-    <span>Vision Packaging · Discovery Architect</span>
-    <span>v0.4 · redesign preview · build 2026-06-12</span>
-    <span id="meta"></span>
-  </footer>
-    </main>
-  </div>
+    <section class="decision-stage" aria-live="polite">
+      <div class="decision-context">
+        <p id="decisionContext"></p>
+        <span class="decision-progress" id="decisionProgress"></span>
+      </div>
+      <article class="decision-card" id="decisionCard" tabindex="-1">
+        <p class="decision-kicker" id="decisionKicker"></p>
+        <h1 class="decision-title" id="decisionTitle"></h1>
+        <p class="decision-hint" id="decisionHint"></p>
+        <div class="decision-options" id="decisionOptions"></div>
+        <div class="decision-leaf" id="decisionLeaf" hidden></div>
+      </article>
+      <div class="coach-cue" id="coachCue" hidden></div>
+    </section>
+    <aside class="outcome-panel" aria-label="Conversation outcomes">
+      <div>
+        <p class="panel-label">RFQ fields captured</p>
+        <div class="outcome-score" id="outcomeScore">0 / 0</div>
+        <div class="outcome-copy">from this opener</div>
+      </div>
+      <div>
+        <hr class="outcome-rule">
+        <p class="panel-label">Captured fields</p>
+        <div class="outcome-fields" id="outcomeFields"></div>
+      </div>
+      <div class="gate-status" id="gateStatus">
+        <p class="panel-label">Gate status</p>
+        <div class="outcome-empty">No blocker on the current path.</div>
+      </div>
+    </aside>
+  </main>
+  <div class="search-results" id="searchResults" role="listbox" aria-label="Search results"></div>
+  <footer class="map-footer" id="meta"></footer>
 </div>
 
 <script>
@@ -1143,428 +1246,308 @@ const DATA = [
 /* =========================================================================
    RENDER
    ========================================================================= */
-const tree = document.getElementById('tree');
+const state = { questionIndex:1, path:[] };
+const refs = {
+  questionStrip:document.getElementById('questionStrip'),
+  pathQuestion:document.getElementById('pathQuestion'),
+  pathList:document.getElementById('pathList'),
+  pathBack:document.getElementById('pathBack'),
+  decisionContext:document.getElementById('decisionContext'),
+  decisionProgress:document.getElementById('decisionProgress'),
+  decisionCard:document.getElementById('decisionCard'),
+  decisionKicker:document.getElementById('decisionKicker'),
+  decisionTitle:document.getElementById('decisionTitle'),
+  decisionHint:document.getElementById('decisionHint'),
+  decisionOptions:document.getElementById('decisionOptions'),
+  decisionLeaf:document.getElementById('decisionLeaf'),
+  coachCue:document.getElementById('coachCue'),
+  outcomeScore:document.getElementById('outcomeScore'),
+  outcomeFields:document.getElementById('outcomeFields'),
+  gateStatus:document.getElementById('gateStatus'),
+  search:document.getElementById('mapSearch'),
+  searchCount:document.getElementById('mapSearchCount'),
+  searchResults:document.getElementById('searchResults')
+};
 
-function fkTags(fk){
-  if(!fk || !fk.length) return '';
-  return fk.map(f=>`<span class="nfk">${f}</span>`).join('');
+function esc(value){
+  return String(value).replace(/[&<>"']/g,char=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+  })[char]);
 }
 
-function xrefChips(refs){
-  if(!refs || !refs.length) return '';
-  return refs.map(r=>`<span class="xref" data-target="${r.target}">${r.label}</span>`).join('');
+function currentQuestion(){
+  return DATA[state.questionIndex];
 }
 
-function renderNode(node){
-  const hasKids = node.children && node.children.length;
-  const el = document.createElement('div');
-  el.className = 'node' + (hasKids ? ' has-children' : '') + (node.type ? ' type-' + node.type : '');
-  if(node.id) el.id = node.id;
-  let html = `<div class="nrow"${hasKids?' role="button" tabindex="0" aria-expanded="false"':''}><span class="nq">${node.q}</span>${node.fk?fkTags(node.fk):''}${xrefChips(node.xref)}${hasKids?'<span class="ntoggle"></span>':''}`;
-  if(node.hint) html += `<span class="nhint">${node.hint}</span>`;
-  html += `</div>`;
-  if(node.script){
-    html += `<div class="script"><b>Say it like this</b>${node.script}</div>`;
-  }
-  el.innerHTML = html;
-  if(hasKids){
-    const kids = document.createElement('div');
-    kids.className = 'children';
-    node.children.forEach(c=>kids.appendChild(renderNode(c)));
-    el.appendChild(kids);
-    const row = el.querySelector('.nrow');
-    const toggleNode = ()=>{
-      const open = el.classList.toggle('open');
-      row.setAttribute('aria-expanded', String(open));
-    };
-    row.addEventListener('click',(e)=>{
-      e.stopPropagation();
-      toggleNode();
-    });
-    row.addEventListener('keydown',(e)=>{
-      if(e.key === 'Enter' || e.key === ' '){
-        e.preventDefault();
-        e.stopPropagation();
-        toggleNode();
-      }
-    });
-  }
-  return el;
+function currentNode(){
+  return state.path.length ? state.path[state.path.length-1] : null;
 }
 
-DATA.forEach(qd=>{
-  const q = document.createElement('div');
-  q.className = 'q';
-  q.id = 'q-' + qd.n;
-  q.dataset.job = qd.job;
-  q.dataset.search = JSON.stringify(qd).toLowerCase();
+function currentChoices(){
+  const node = currentNode();
+  return node ? (node.children || []) : currentQuestion().branches;
+}
 
-  const fills = qd.fills.map(f=>`<span class="fk">${f}</span>`).join('');
-  q.innerHTML = `
-    <div class="qhead" role="button" tabindex="0" aria-expanded="false">
-      <div class="qnum">${qd.n}</div>
-      <div class="qtext">
-        <p class="qtitle">${qd.title}</p>
-        <p class="qwhy">${qd.why}</p>
-        <span class="qjob job-${qd.job}">${qd.jobLabel}</span>
-      </div>
-      <svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 6 15 12 9 18"/></svg>
-    </div>
-    <div class="qbody">
-      <div class="fills"><span class="flabel">Fills →</span>${fills}</div>
-      <div class="branch"></div>
-    </div>`;
+function compactLabel(value,max=48){
+  const clean = value.replace(/^⚠️\s*/,'').replace(/^RULE:\s*/,'');
+  return clean.length > max ? clean.slice(0,max-1)+'…' : clean;
+}
 
-  const branchHost = q.querySelector('.branch');
-  qd.branches.forEach(b=>branchHost.appendChild(renderNode(b)));
+function nodeMeta(node){
+  if(node.type === 'gate') return 'Blocking gate';
+  if(node.type === 'loop') return 'Loops back through the sequence';
+  if(node.type === 'rule') return 'Business rule';
+  if(node.type === 'section') return 'Open this lane';
+  if(node.children && node.children.length) return node.children.length+' next moves';
+  if(node.fk && node.fk.length) return 'Captures '+node.fk.join(', ');
+  return 'Record the answer';
+}
 
-  const qhead = q.querySelector('.qhead');
-  const toggleQuestion = ()=>{
-    const open = q.classList.toggle('open');
-    qhead.setAttribute('aria-expanded', String(open));
-  };
-  qhead.addEventListener('click',toggleQuestion);
-  qhead.addEventListener('keydown',(e)=>{
-    if(e.key === 'Enter' || e.key === ' '){
-      e.preventDefault();
-      toggleQuestion();
+function findPathById(nodes,target,path=[]){
+  for(const node of nodes){
+    const next=[...path,node];
+    if(node.id === target) return next;
+    if(node.children){
+      const found=findPathById(node.children,target,next);
+      if(found) return found;
     }
-  });
-  tree.appendChild(q);
-});
-
-/* ---- controls ---- */
-const qs = [...document.querySelectorAll('.q')];
-const indexLinks = [...document.querySelectorAll('.index-link')];
-
-/* ---- manual index ---- */
-function setActiveIndex(questionId){
-  indexLinks.forEach(link=>link.classList.toggle('is-current',link.dataset.question===questionId));
-}
-
-indexLinks.forEach(link=>{
-  link.addEventListener('click',()=>{
-    const target = document.getElementById(link.dataset.question);
-    if(!target) return;
-    setActiveIndex(target.id);
-    target.classList.add('open');
-    target.querySelector('.qhead').setAttribute('aria-expanded','true');
-    target.scrollIntoView({behavior:'smooth',block:'start'});
-    updateBreadcrumb(target);
-    setTimeout(()=>setActiveIndex(target.id),450);
-  });
-});
-
-if('IntersectionObserver' in window){
-  const indexObserver = new IntersectionObserver(entries=>{
-    const visible = entries
-      .filter(entry=>entry.isIntersecting)
-      .sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top)[0];
-    if(!visible) return;
-    setActiveIndex(visible.target.id);
-  },{rootMargin:'-10% 0px -72% 0px',threshold:[0,.2]});
-  qs.forEach(q=>indexObserver.observe(q));
-}
-
-/* ---- cross-reference jumps ---- */
-document.addEventListener('click', (e) => {
-  const chip = e.target.closest('.xref');
-  if(!chip) return;
-  e.stopPropagation();
-  const target = document.getElementById(chip.dataset.target);
-  if(!target) return;
-  // walk up and open every collapsed ancestor
-  let cur = target;
-  while(cur){
-    if(cur.classList && (cur.classList.contains('node') || cur.classList.contains('q'))){
-      cur.classList.add('open');
-      const control = cur.querySelector(':scope > .nrow, :scope > .qhead');
-      if(control) control.setAttribute('aria-expanded','true');
-    }
-    cur = cur.parentElement;
   }
-  // scroll into view, then flash
-  setTimeout(()=>{
-    target.scrollIntoView({behavior:'smooth', block:'center'});
-    target.classList.add('xref-flash');
-    setTimeout(()=>target.classList.remove('xref-flash'), 1800);
-  }, 60);
-});
+  return null;
+}
 
-/* ---- expand / collapse ---- */
-document.getElementById('expandAll').addEventListener('click',()=>{
-  qs.forEach(q=>{
-    q.classList.add('open');
-    q.querySelector('.qhead').setAttribute('aria-expanded','true');
-  });
-  document.querySelectorAll('.node.has-children').forEach(n=>{
-    n.classList.add('open');
-    n.querySelector(':scope > .nrow').setAttribute('aria-expanded','true');
-  });
-});
-document.getElementById('collapseAll').addEventListener('click',()=>{
-  qs.forEach(q=>{
-    q.classList.remove('open');
-    q.querySelector('.qhead').setAttribute('aria-expanded','false');
-  });
-  document.querySelectorAll('.node.has-children').forEach(n=>{
-    n.classList.remove('open');
-    n.querySelector(':scope > .nrow').setAttribute('aria-expanded','false');
-  });
-  updateBreadcrumb(null);
-});
+function findTarget(target){
+  if(target && target.startsWith('q-')){
+    const n=Number(target.slice(2));
+    return Number.isInteger(n) && n >= 1 && n <= DATA.length ? {questionIndex:n-1,path:[]} : null;
+  }
+  for(let i=0;i<DATA.length;i++){
+    const path=findPathById(DATA[i].branches,target);
+    if(path) return {questionIndex:i,path};
+  }
+  return null;
+}
 
-/* ---- job filter (click model cell to filter questions to that job) ---- */
-const jobCells = document.querySelectorAll('.cell.job-cell');
-let activeJob = null;
-jobCells.forEach(cell=>{
-  const toggleJob = ()=>{
-    const job = cell.dataset.job;
-    if(activeJob === job){
-      // deactivate (show all)
-      jobCells.forEach(c=>{
-        c.classList.remove('is-active');
-        c.setAttribute('aria-pressed','false');
+function renderQuestionStrip(){
+  refs.questionStrip.innerHTML=DATA.map((q,index)=>`
+    <button class="map-question${index===state.questionIndex?' is-active':''}" type="button" data-q="${index}">
+      <span class="mq-num">Q${String(q.n).padStart(2,'0')} / ${esc(q.jobLabel.replace(/^Job \d · /,''))}</span>
+      <span class="mq-title">${esc(q.title)}</span>
+    </button>`).join('');
+  refs.questionStrip.querySelectorAll('.map-question').forEach(button=>{
+    button.addEventListener('click',()=>{
+      state.questionIndex=Number(button.dataset.q);
+      state.path=[];
+      render();
+    });
+  });
+}
+
+function renderPath(){
+  const q=currentQuestion();
+  refs.pathQuestion.textContent='Q'+q.n+' · '+q.title;
+  const steps=[
+    {code:'Q'+q.n,label:q.title,status:state.path.length?'done':'current'},
+    ...state.path.map((node,index)=>({
+      code:String(q.n)+'.'+String(index+1).padStart(2,'0'),
+      label:compactLabel(node.q,42),
+      status:index===state.path.length-1?'current':'done'
+    }))
+  ];
+  const choices=currentChoices();
+  if(choices.length && state.path.length){
+    steps.push({code:'NEXT',label:compactLabel(choices[0].q,42),status:'upcoming'});
+  }
+  refs.pathList.innerHTML=steps.map(step=>`
+    <li class="path-step is-${step.status}">
+      <span class="path-dot">${step.status==='done'?'✓':''}</span>
+      <span class="path-code">${esc(step.code)}</span>
+      <span class="path-copy">${esc(step.label)}</span>
+    </li>`).join('');
+  refs.pathBack.disabled=state.path.length===0;
+}
+
+function renderDecision(){
+  const q=currentQuestion();
+  const node=currentNode();
+  const choices=currentChoices();
+  const xrefs=node && node.xref ? node.xref : [];
+  refs.decisionContext.textContent='Q'+q.n+' / '+q.jobLabel.replace(/^Job \d · /,'');
+  refs.decisionProgress.textContent=state.path.length+' moves deep';
+  refs.decisionKicker.textContent=node ? (node.type==='gate'?'Blocking gate':'Current decision') : 'Choose a branch';
+  refs.decisionTitle.textContent=node ? node.q : q.title;
+  refs.decisionHint.textContent=node ? (node.hint || q.why) : q.why;
+  refs.decisionOptions.innerHTML='';
+  refs.decisionLeaf.hidden=choices.length>0 || xrefs.length>0;
+
+  if(choices.length){
+    choices.forEach(choice=>{
+      const button=document.createElement('button');
+      button.type='button';
+      button.className='decision-option';
+      button.innerHTML=`<span class="do-copy">${esc(choice.q)}<span class="do-meta">${esc(nodeMeta(choice))}</span></span><span class="do-arrow">→</span>`;
+      button.addEventListener('click',()=>{
+        state.path.push(choice);
+        render();
+        refs.decisionCard.focus({preventScroll:true});
       });
-      qs.forEach(q=>q.classList.remove('hidden-by-job'));
-      activeJob = null;
-    } else {
-      jobCells.forEach(c=>{
-        const active = c===cell;
-        c.classList.toggle('is-active',active);
-        c.setAttribute('aria-pressed',String(active));
+      refs.decisionOptions.appendChild(button);
+    });
+  }
+
+  if(xrefs.length){
+    const label=document.createElement('p');
+    label.className='xref-label';
+    label.textContent='Related conversation';
+    refs.decisionOptions.appendChild(label);
+    xrefs.forEach(xref=>{
+      const button=document.createElement('button');
+      button.type='button';
+      button.className='decision-option xref-option';
+      button.innerHTML=`<span class="do-copy">${esc(xref.label)}<span class="do-meta">Jump to the related branch</span></span><span class="do-arrow">↗</span>`;
+      button.addEventListener('click',()=>{
+        const target=findTarget(xref.target);
+        if(!target) return;
+        state.questionIndex=target.questionIndex;
+        state.path=[...target.path];
+        render();
+        refs.decisionCard.focus({preventScroll:true});
       });
-      qs.forEach(q=>q.classList.toggle('hidden-by-job', q.dataset.job !== job));
-      activeJob = job;
-    }
-  };
-  cell.addEventListener('click',toggleJob);
-  cell.addEventListener('keydown',(e)=>{
-    if(e.key === 'Enter' || e.key === ' '){
-      e.preventDefault();
-      toggleJob();
-    }
+      refs.decisionOptions.appendChild(button);
+    });
+  }
+
+  if(!choices.length && !xrefs.length){
+    refs.decisionLeaf.innerHTML='<strong>Answer captured</strong>This branch ends here. Return one step to explore another answer, or choose another opener above.';
+  }
+
+  const cue=node && (node.script || node.hint);
+  refs.coachCue.hidden=!cue;
+  refs.coachCue.classList.toggle('script-cue',Boolean(node && node.script));
+  if(cue){
+    refs.coachCue.innerHTML=`<b>${node.script?'Say it like this':'Coaching cue'}</b><span>${esc(node.script || node.hint)}</span>`;
+  }
+}
+
+function collectedFields(){
+  const fields=[];
+  state.path.forEach(node=>(node.fk||[]).forEach(field=>{
+    if(!fields.includes(field)) fields.push(field);
+  }));
+  return fields;
+}
+
+function activeGate(){
+  for(let i=state.path.length-1;i>=0;i--){
+    if(state.path[i].type==='gate') return state.path[i];
+  }
+  return null;
+}
+
+function renderOutcome(){
+  const q=currentQuestion();
+  const fields=collectedFields();
+  const goal=[...new Set(q.fills)];
+  const completedGoals=goal.filter(field=>fields.includes(field)).length;
+  refs.outcomeScore.textContent=completedGoals+' / '+goal.length;
+  refs.outcomeFields.innerHTML=fields.length
+    ? fields.map(field=>`<span class="outcome-field">${esc(field)}</span>`).join('')
+    : '<span class="outcome-empty">Choose a branch to begin capturing fields.</span>';
+  const gate=activeGate();
+  if(gate){
+    const required=(gate.children||[]).filter(node=>node.type==='required');
+    refs.gateStatus.innerHTML=`
+      <p class="panel-label">Gate status</p>
+      <div class="gate-card">
+        <strong>Order Form blocked</strong>
+        <span>${esc(gate.q)}</span>
+        ${required.length?`<ul class="gate-list">${required.map(item=>`<li>□ ${esc(item.q)}</li>`).join('')}</ul>`:''}
+      </div>`;
+  }else{
+    refs.gateStatus.innerHTML='<p class="panel-label">Gate status</p><div class="outcome-empty">No blocker on the current path.</div>';
+  }
+}
+
+function render(){
+  renderQuestionStrip();
+  renderPath();
+  renderDecision();
+  renderOutcome();
+}
+
+function buildSearchIndex(){
+  const rows=[];
+  DATA.forEach((q,questionIndex)=>{
+    rows.push({questionIndex,path:[],title:q.title,context:'Q'+q.n+' opener'});
+    const walk=(nodes,path=[])=>nodes.forEach(node=>{
+      const next=[...path,node];
+      rows.push({questionIndex,path:next,title:node.q,context:'Q'+q.n+' · '+next.slice(0,-1).map(n=>compactLabel(n.q,20)).join(' / ')});
+      if(node.children) walk(node.children,next);
+    });
+    walk(q.branches);
+  });
+  return rows;
+}
+
+const searchIndex=buildSearchIndex();
+refs.search.addEventListener('input',()=>{
+  const term=refs.search.value.trim().toLowerCase();
+  if(term.length<2){
+    refs.searchResults.classList.remove('is-open');
+    refs.searchResults.innerHTML='';
+    refs.searchCount.textContent='';
+    return;
+  }
+  const matches=searchIndex.filter(row=>
+    row.title.toLowerCase().includes(term) || row.context.toLowerCase().includes(term)
+  ).slice(0,18);
+  refs.searchCount.textContent=String(matches.length);
+  refs.searchResults.innerHTML=matches.length ? matches.map((row,index)=>`
+    <button class="search-result" type="button" data-result="${index}" role="option">
+      <b>${esc(compactLabel(row.title,76))}</b>
+      <span>${esc(row.context)}</span>
+    </button>`).join('') : '<div class="search-result"><b>No matches</b><span>Try another product, field, or coaching term.</span></div>';
+  refs.searchResults.classList.add('is-open');
+  refs.searchResults.querySelectorAll('[data-result]').forEach(button=>{
+    button.addEventListener('click',()=>{
+      const row=matches[Number(button.dataset.result)];
+      state.questionIndex=row.questionIndex;
+      state.path=[...row.path];
+      refs.search.value='';
+      refs.searchCount.textContent='';
+      refs.searchResults.classList.remove('is-open');
+      render();
+      refs.decisionCard.focus();
+    });
   });
 });
 
-/* ---- essentials mode (training filter, hides deep coaching detail) ---- */
-function markEssentials(){
-  const allNodes = document.querySelectorAll('#tree .node');
-  // Pass 1: direct essentials by rule
-  allNodes.forEach(n=>{
-    n.classList.remove('essential');
-    const isStructural = n.classList.contains('type-section')
-      || n.classList.contains('type-gate')
-      || n.classList.contains('type-rule')
-      || n.classList.contains('type-required')
-      || n.classList.contains('type-loop');
-    const hasFk = n.querySelector(':scope > .nrow > .nfk') !== null;
-    const isTopBranch = n.parentElement && n.parentElement.classList.contains('branch');
-    if(isStructural || hasFk || isTopBranch){
-      n.classList.add('essential');
-    }
-  });
-  // Pass 2: ancestors of essentials become essential
-  let changed = true;
-  while(changed){
-    changed = false;
-    allNodes.forEach(n=>{
-      if(n.classList.contains('essential')) return;
-      if(n.querySelector('.essential')){
-        n.classList.add('essential');
-        changed = true;
-      }
-    });
-  }
-}
-markEssentials();
-
-const essentialsBtn = document.getElementById('essentialsToggle');
-essentialsBtn.addEventListener('click', ()=>{
-  const tree = document.getElementById('tree');
-  const on = tree.classList.toggle('essentials-on');
-  essentialsBtn.classList.toggle('is-active', on);
-  essentialsBtn.setAttribute('aria-pressed',String(on));
-  essentialsBtn.textContent = on ? 'Show everything' : 'Essentials only';
-  if(on){
-    // auto-expand so the essentials trail is visible
-    qs.forEach(q=>{
-      if(!q.classList.contains('hidden-by-job')){
-        q.classList.add('open');
-        q.querySelector('.qhead').setAttribute('aria-expanded','true');
-      }
-    });
-    document.querySelectorAll('.node.has-children.essential').forEach(n=>{
-      n.classList.add('open');
-      n.querySelector(':scope > .nrow').setAttribute('aria-expanded','true');
-    });
+document.addEventListener('click',event=>{
+  if(!event.target.closest('.map-search-wrap') && !event.target.closest('.search-results')){
+    refs.searchResults.classList.remove('is-open');
   }
 });
 
-/* ---- breadcrumb (sticky trail showing where you are) ---- */
-const breadcrumb = document.getElementById('breadcrumb');
-function updateBreadcrumb(target){
-  if(!target){
-    breadcrumb.innerHTML = '<span class="breadcrumb-empty">Click any question to start. Your trail will show here.</span>';
-    breadcrumb._path = null;
-    return;
-  }
-  const path = [];
-  let cur = target;
-  while(cur && cur !== document.body){
-    if(cur.classList && cur.classList.contains('q')){
-      const num = cur.querySelector('.qnum').textContent.trim();
-      const title = cur.querySelector('.qtitle').textContent.trim();
-      path.unshift({text:'Q'+num+' '+title.toLowerCase(), el:cur});
-    } else if(cur.classList && cur.classList.contains('node')){
-      const nq = cur.querySelector(':scope > .nrow > .nq');
-      if(nq){
-        let t = nq.textContent.trim();
-        if(t.length > 42) t = t.substring(0,40)+'…';
-        path.unshift({text:t, el:cur});
-      }
-    }
-    cur = cur.parentElement;
-  }
-  if(path.length === 0){
-    updateBreadcrumb(null);
-    return;
-  }
-  breadcrumb.innerHTML = path.map((p,i)=>{
-    const isLast = i === path.length-1;
-    if(isLast) return `<span class="breadcrumb-current">${p.text}</span>`;
-    return `<span class="breadcrumb-segment" data-idx="${i}">${p.text}</span><span class="breadcrumb-sep">›</span>`;
-  }).join('');
-  breadcrumb._path = path;
-}
-
-document.addEventListener('click',(e)=>{
-  // ignore the search field, xref chips, and breadcrumb itself
-  if(e.target.closest('.xref') || e.target.closest('.breadcrumb') || e.target.closest('.toolbar')) return;
-  const row = e.target.closest('.qhead, .nrow');
-  if(!row) return;
-  updateBreadcrumb(row.parentElement);
+refs.pathBack.addEventListener('click',()=>{
+  state.path.pop();
+  render();
+  refs.decisionCard.focus({preventScroll:true});
 });
 
-breadcrumb.addEventListener('click',(e)=>{
-  const seg = e.target.closest('.breadcrumb-segment');
-  if(!seg) return;
-  const idx = parseInt(seg.dataset.idx,10);
-  if(breadcrumb._path && breadcrumb._path[idx]){
-    const t = breadcrumb._path[idx].el;
-    t.scrollIntoView({behavior:'smooth', block:'center'});
-    t.classList.add('xref-flash');
-    setTimeout(()=>t.classList.remove('xref-flash'), 1800);
-    updateBreadcrumb(t);
+document.getElementById('mapReset').addEventListener('click',()=>{
+  state.path=[];
+  render();
+  refs.decisionCard.focus();
+});
+
+document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'){
+    refs.searchResults.classList.remove('is-open');
+    refs.search.value='';
+    refs.searchCount.textContent='';
   }
 });
 
-/* ---- search with prev/next navigation across all matches ---- */
-const search = document.getElementById('search');
-const searchCounter = document.getElementById('searchCounter');
-const searchPrev = document.getElementById('searchPrev');
-const searchNext = document.getElementById('searchNext');
-let searchMatches = [];
-let searchIdx = 0;
-
-function clearSearchState(){
-  document.querySelectorAll('.search-hit, .search-current, .search-hit-q').forEach(n=>{
-    n.classList.remove('search-hit','search-current','search-hit-q');
-  });
-  searchMatches = [];
-  searchIdx = 0;
-  searchCounter.textContent = '';
-  searchPrev.disabled = true;
-  searchNext.disabled = true;
-}
-
-search.addEventListener('input',()=>{
-  const t = search.value.trim().toLowerCase();
-  clearSearchState();
-  if(!t){
-    qs.forEach(q=>{
-      q.classList.remove('hidden');
-      q.classList.remove('open');
-      q.querySelector('.qhead').setAttribute('aria-expanded','false');
-    });
-    document.querySelectorAll('.node.has-children').forEach(n=>{
-      n.classList.remove('open');
-      n.querySelector(':scope > .nrow').setAttribute('aria-expanded','false');
-    });
-    return;
-  }
-  qs.forEach(q=>{
-    if(!q.dataset.search.includes(t)){
-      q.classList.add('hidden');
-      return;
-    }
-    q.classList.remove('hidden');
-    q.classList.add('open');
-    q.querySelector('.qhead').setAttribute('aria-expanded','true');
-    // find which specific nodes match
-    const nodes = q.querySelectorAll('.node');
-    nodes.forEach(n=>{
-      const nq = n.querySelector(':scope > .nrow > .nq');
-      if(nq && nq.textContent.toLowerCase().includes(t)){
-        n.classList.add('search-hit');
-        searchMatches.push(n);
-        // open ancestors so the hit is visible
-        let cur = n.parentElement;
-        while(cur && cur !== q){
-          if(cur.classList && cur.classList.contains('node') && cur.classList.contains('has-children')){
-            cur.classList.add('open');
-            cur.querySelector(':scope > .nrow').setAttribute('aria-expanded','true');
-          }
-          cur = cur.parentElement;
-        }
-      }
-    });
-    // also check the question title itself
-    const qt = q.querySelector('.qtitle');
-    if(qt && qt.textContent.toLowerCase().includes(t)){
-      q.querySelector('.qhead').classList.add('search-hit-q');
-    }
-  });
-  updateSearchUI();
-});
-
-function updateSearchUI(){
-  if(searchMatches.length === 0){
-    searchCounter.textContent = search.value ? 'no matches in branches' : '';
-    searchPrev.disabled = true;
-    searchNext.disabled = true;
-    return;
-  }
-  document.querySelectorAll('.search-current').forEach(n=>n.classList.remove('search-current'));
-  searchCounter.textContent = (searchIdx+1)+' of '+searchMatches.length;
-  searchPrev.disabled = false;
-  searchNext.disabled = false;
-  const cur = searchMatches[searchIdx];
-  cur.classList.add('search-current');
-  cur.scrollIntoView({behavior:'smooth', block:'center'});
-}
-
-searchPrev.addEventListener('click',()=>{
-  if(searchMatches.length === 0) return;
-  searchIdx = (searchIdx - 1 + searchMatches.length) % searchMatches.length;
-  updateSearchUI();
-});
-searchNext.addEventListener('click',()=>{
-  if(searchMatches.length === 0) return;
-  searchIdx = (searchIdx + 1) % searchMatches.length;
-  updateSearchUI();
-});
-search.addEventListener('keydown',(e)=>{
-  if(e.key === 'Enter'){
-    e.preventDefault();
-    if(e.shiftKey) searchPrev.click(); else searchNext.click();
-  }
-});
-
-/* ---- footer meta ---- */
-function count(nodes){let c=0;nodes.forEach(n=>{c++;if(n.children)c+=count(n.children);});return c;}
-const total = DATA.reduce((a,q)=>a+count(q.branches),0);
-document.getElementById('meta').textContent = `10 openers · ${total} branches · click to expand`;
+render();
 </script>
 </body>
 </html>
